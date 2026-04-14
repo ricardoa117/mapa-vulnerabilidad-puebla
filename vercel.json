@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/((?!mapa_vulnerabilidad_combinado\\.html).*)", "destination": "/index.html" }
+  ]
+}
