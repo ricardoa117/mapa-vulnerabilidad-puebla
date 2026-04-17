@@ -17,7 +17,7 @@ export default function Dashboard({ user, onLogout }) {
             </svg>
           </div>
           <div>
-            <div style={s.sysName}>Sistema TIA</div>
+            <div style={s.sysName}>Sistema MV</div>
             <div style={s.sysDesc}>Vulnerabilidad Social · Puebla</div>
           </div>
         </div>
