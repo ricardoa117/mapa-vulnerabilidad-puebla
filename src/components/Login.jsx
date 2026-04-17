@@ -170,7 +170,7 @@ export default function Login({ onLogin }) {
 
         {/* Títulos */}
         <div style={styles.titleBlock}>
-          <p style={styles.overline}>Sistema TIA · Puebla</p>
+          <p style={styles.overline}>Sistema MV · Puebla</p>
           <h1 style={styles.title}>Acceso al<br/>Sistema</h1>
           <p style={styles.subtitle}>Análisis de Vulnerabilidad Social</p>
         </div>
@@ -257,7 +257,7 @@ export default function Login({ onLogin }) {
 
       {/* Footer global */}
       <p style={styles.globalFooter}>
-        Proyecto TIA · INEGI 2020 · Puebla, México
+        Proyecto MV · INEGI 2020 · Puebla, México
       </p>
 
       <style>{`
