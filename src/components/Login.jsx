@@ -1,97 +1,121 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { supabase } from '../supabase.js'
 
-/* ─── Tiny canvas de puntos que simulan un mapa de calor ─── */
-function MapCanvas() {
-  const ref = useRef(null)
+/* ─── Patrón SVG Talavera Poblana ─── */
+function TalaveraSVG({ dark }) {
+  const tileBg = dark ? '#0a1f38' : '#e8f4fb'
+  const tileFg = dark ? '#0092DD' : '#005ca9'
+  const panelBg = dark ? '#003366' : '#0092DD'
 
-  useEffect(() => {
-    const canvas = ref.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
+  return (
+    <svg
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+      viewBox="0 0 420 600"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMid slice"
+    >
+      <defs>
+        <pattern id="tv" x="0" y="0" width="140" height="140" patternUnits="userSpaceOnUse">
+          <rect width="140" height="140" fill={tileBg}/>
+          <rect x="4" y="4" width="132" height="132" fill="none" stroke={tileFg} strokeWidth="2.5"/>
+          <rect x="9" y="9" width="122" height="122" fill="none" stroke={tileFg} strokeWidth="0.7"/>
+          <g fill="#0092DD" opacity="0.35">
+            {[28,48,70,92,112].map(x => [28,48,92,112].map(y =>
+              <circle key={`${x}-${y}`} cx={x} cy={y} r="1.8"/>
+            ))}
+            <circle cx="28" cy="70" r="1.8"/><circle cx="112" cy="70" r="1.8"/>
+          </g>
+          <polygon points="70,14 126,70 70,126 14,70" fill="none" stroke={tileFg} strokeWidth="2.2"/>
+          <polygon points="70,22 118,70 70,118 22,70" fill="none" stroke="#0092DD" strokeWidth="0.9" strokeDasharray="3,3"/>
+          {/* Pétalos cardinales */}
+          <path d="M70,36 C63,44 60,54 63,60 C66,65 70,63 70,63 C70,63 74,65 77,60 C80,54 77,44 70,36Z" fill={tileFg}/>
+          <path d="M70,104 C63,96 60,86 63,80 C66,75 70,77 70,77 C70,77 74,75 77,80 C80,86 77,96 70,104Z" fill={tileFg}/>
+          <path d="M36,70 C44,63 54,60 60,63 C65,66 63,70 63,70 C63,70 65,74 60,77 C54,80 44,77 36,70Z" fill={tileFg}/>
+          <path d="M104,70 C96,63 86,60 80,63 C75,66 77,70 77,70 C77,70 75,74 80,77 C86,80 96,77 104,70Z" fill={tileFg}/>
+          {/* Rayitas en pétalos */}
+          <line x1="70" y1="40" x2="70" y2="56" stroke={tileBg} strokeWidth="0.8" opacity="0.7"/>
+          <line x1="70" y1="84" x2="70" y2="100" stroke={tileBg} strokeWidth="0.8" opacity="0.7"/>
+          <line x1="40" y1="70" x2="56" y2="70" stroke={tileBg} strokeWidth="0.8" opacity="0.7"/>
+          <line x1="84" y1="70" x2="100" y2="70" stroke={tileBg} strokeWidth="0.8" opacity="0.7"/>
+          {/* Pétalos diagonales */}
+          <path d="M47,47 C47,41 53,40 55,46 C51,48 49,49 47,47Z" fill={tileFg}/>
+          <path d="M93,47 C93,41 87,40 85,46 C89,48 91,49 93,47Z" fill={tileFg}/>
+          <path d="M47,93 C47,99 53,100 55,94 C51,92 49,91 47,93Z" fill={tileFg}/>
+          <path d="M93,93 C93,99 87,100 85,94 C89,92 91,91 93,93Z" fill={tileFg}/>
+          {/* Centro concéntrico */}
+          <circle cx="70" cy="70" r="16" fill={tileBg} stroke={tileFg} strokeWidth="1.8"/>
+          <circle cx="70" cy="70" r="11" fill={tileFg}/>
+          <circle cx="70" cy="70" r="6.5" fill={tileBg}/>
+          <circle cx="70" cy="70" r="3" fill={tileFg}/>
+          <circle cx="70" cy="60" r="2" fill={tileBg}/>
+          <circle cx="70" cy="80" r="2" fill={tileBg}/>
+          <circle cx="60" cy="70" r="2" fill={tileBg}/>
+          <circle cx="80" cy="70" r="2" fill={tileBg}/>
+          {/* Volutas en vértices del diamante */}
+          <path d="M70,16 Q64,23 67,27 Q71,31 70,23" fill="none" stroke={tileFg} strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M70,16 Q76,23 73,27 Q69,31 70,23" fill="none" stroke={tileFg} strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M70,124 Q64,117 67,113 Q71,109 70,117" fill="none" stroke={tileFg} strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M70,124 Q76,117 73,113 Q69,109 70,117" fill="none" stroke={tileFg} strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M16,70 Q23,64 27,67 Q31,71 23,70" fill="none" stroke={tileFg} strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M16,70 Q23,76 27,73 Q31,69 23,70" fill="none" stroke={tileFg} strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M124,70 Q117,64 113,67 Q109,71 117,70" fill="none" stroke={tileFg} strokeWidth="1.6" strokeLinecap="round"/>
+          <path d="M124,70 Q117,76 113,73 Q109,69 117,70" fill="none" stroke={tileFg} strokeWidth="1.6" strokeLinecap="round"/>
+          {/* Flores en las 4 esquinas */}
+          {[[14,14],[126,14],[14,126],[126,126]].map(([cx,cy]) => (
+            <g key={`${cx}-${cy}`} transform={`translate(${cx},${cy})`}>
+              <circle r="8" fill="none" stroke={tileFg} strokeWidth="1.5"/>
+              <circle r="4" fill={tileFg}/>
+              <circle cy="-8" r="2.2" fill={tileFg}/>
+              <circle cx="8" r="2.2" fill={tileFg}/>
+              <circle cy="8" r="2.2" fill={tileFg}/>
+              <circle cx="-8" r="2.2" fill={tileFg}/>
+            </g>
+          ))}
+          {/* Crucetas de unión entre tiles */}
+          <line x1="0" y1="70" x2="14" y2="70" stroke={tileFg} strokeWidth="1.2"/>
+          <line x1="126" y1="70" x2="140" y2="70" stroke={tileFg} strokeWidth="1.2"/>
+          <line x1="70" y1="0" x2="70" y2="14" stroke={tileFg} strokeWidth="1.2"/>
+          <line x1="70" y1="126" x2="70" y2="140" stroke={tileFg} strokeWidth="1.2"/>
+        </pattern>
 
-    let W = canvas.width  = canvas.offsetWidth
-    let H = canvas.height = canvas.offsetHeight
+        <pattern id="meandro" x="0" y="0" width="32" height="20" patternUnits="userSpaceOnUse">
+          <rect width="32" height="20" fill="#005ca9"/>
+          <path d="M2,10 Q2,3 9,3 Q16,3 16,10 Q16,17 23,17 Q30,17 30,10" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"/>
+          <circle cx="16" cy="10" r="1.5" fill="#fdc533"/>
+        </pattern>
 
-    // Puntos fijos que recuerdan al mapa de Puebla
-    const SEED = 42
-    const rng = (() => { let s = SEED; return () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return (s >>> 0) / 0xffffffff } })()
-    const pts = Array.from({ length: 180 }, () => ({
-      x: rng() * W, y: rng() * H,
-      vx: (rng() - .5) * .18, vy: (rng() - .5) * .18,
-      r: rng(),                   // 0..1 → color
-      s: 1.5 + rng() * 3,
-    }))
+        <pattern id="triangulos" x="0" y="0" width="24" height="16" patternUnits="userSpaceOnUse">
+          <rect width="24" height="16" fill="#005ca9"/>
+          <polygon points="12,2 22,14 2,14" fill="none" stroke="#fff" strokeWidth="1.4"/>
+        </pattern>
 
-    const COLORS = ['#22c55e','#0ea5e9','#f59e0b','#ef4444','#a78bfa']
+        <linearGradient id="fadedown" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#005ca9" stopOpacity="0"/>
+          <stop offset="45%" stopColor="#005ca9" stopOpacity="0.7"/>
+          <stop offset="100%" stopColor="#003d75" stopOpacity="0.98"/>
+        </linearGradient>
+      </defs>
 
-    let raf
-    function draw() {
-      ctx.clearRect(0, 0, W, H)
-
-      // Líneas de conexión suaves entre puntos cercanos
-      for (let i = 0; i < pts.length; i++) {
-        for (let j = i + 1; j < pts.length; j++) {
-          const dx = pts[i].x - pts[j].x
-          const dy = pts[i].y - pts[j].y
-          const d  = Math.sqrt(dx*dx + dy*dy)
-          if (d < 90) {
-            ctx.beginPath()
-            ctx.strokeStyle = `rgba(34,197,94,${(1 - d/90) * .12})`
-            ctx.lineWidth = .6
-            ctx.moveTo(pts[i].x, pts[i].y)
-            ctx.lineTo(pts[j].x, pts[j].y)
-            ctx.stroke()
-          }
-        }
-      }
-
-      pts.forEach(p => {
-        ctx.beginPath()
-        const col = COLORS[Math.floor(p.r * COLORS.length)]
-        ctx.fillStyle = col.replace(')', ', .65)').replace('rgb', 'rgba').replace('#', '')
-        // Convertir hex a rgba manualmente
-        ctx.fillStyle = hexToRgba(col, .65)
-        ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2)
-        ctx.fill()
-
-        // Halo
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.s * 6)
-        g.addColorStop(0, hexToRgba(col, .08))
-        g.addColorStop(1, 'transparent')
-        ctx.beginPath()
-        ctx.fillStyle = g
-        ctx.arc(p.x, p.y, p.s * 6, 0, Math.PI * 2)
-        ctx.fill()
-
-        p.x += p.vx; p.y += p.vy
-        if (p.x < 0) p.x = W; if (p.x > W) p.x = 0
-        if (p.y < 0) p.y = H; if (p.y > H) p.y = 0
-      })
-
-      raf = requestAnimationFrame(draw)
-    }
-
-    function hexToRgba(hex, a) {
-      const r = parseInt(hex.slice(1,3),16)
-      const g = parseInt(hex.slice(3,5),16)
-      const b = parseInt(hex.slice(5,7),16)
-      return `rgba(${r},${g},${b},${a})`
-    }
-
-    draw()
-    const obs = new ResizeObserver(() => {
-      W = canvas.width  = canvas.offsetWidth
-      H = canvas.height = canvas.offsetHeight
-    })
-    obs.observe(canvas)
-    return () => { cancelAnimationFrame(raf); obs.disconnect() }
-  }, [])
-
-  return <canvas ref={ref} style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:.6 }} />
+      <rect width="420" height="600" fill={panelBg}/>
+      <rect width="420" height="600" fill="url(#tv)"/>
+      <rect x="0" y="0" width="420" height="22" fill="url(#meandro)"/>
+      <line x1="0" y1="22" x2="420" y2="22" stroke="#0092DD" strokeWidth="1"/>
+      <rect x="0" y="558" width="420" height="20" fill="url(#triangulos)"/>
+      <line x1="0" y1="558" x2="420" y2="558" stroke="#0092DD" strokeWidth="1"/>
+      {/* Puntitos entre franja y tiles */}
+      <g fill="#ffffff" opacity="0.5">
+        {Array.from({length:26},(_,i)=>
+          <circle key={i} cx={8+i*16} cy="27" r="1.5"/>
+        )}
+      </g>
+      <rect x="394" y="0" width="26" height="600" fill="#005ca9" opacity="0.75"/>
+      <line x1="394" y1="0" x2="394" y2="600" stroke="rgba(255,255,255,0.25)" strokeWidth="0.8"/>
+      <rect x="0" y="330" width="420" height="270" fill="url(#fadedown)"/>
+    </svg>
+  )
 }
 
-/* ─── Componente principal de Login ─── */
+/* ─── Login principal ─── */
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -99,409 +123,140 @@ export default function Login({ onLogin }) {
   const [loading,  setLoading]  = useState(false)
   const [shake,    setShake]    = useState(false)
   const [focused,  setFocused]  = useState(null)
+  const [dark,     setDark]     = useState(false)
+
+  function triggerShake() { setShake(true); setTimeout(() => setShake(false), 500) }
 
   async function handleSubmit(e) {
     e.preventDefault()
     if (!username.trim() || !password.trim()) {
-      setError('Completa todos los campos.')
-      triggerShake()
-      return
+      setError('Completa todos los campos.'); triggerShake(); return
     }
-
-    setLoading(true)
-    setError('')
-
+    setLoading(true); setError('')
     try {
       const { data, error: dbErr } = await supabase
         .from('usuarios_sistema')
         .select('id, username, nombre, password')
         .eq('username', username.trim())
         .single()
-
-      if (dbErr || !data) {
-        throw new Error('Usuario no encontrado.')
-      }
-
-      // Comparación directa de contraseña (texto plano según la tabla)
-      if (data.password !== password) {
-        throw new Error('Contraseña incorrecta.')
-      }
-
+      if (dbErr || !data) throw new Error('Usuario no encontrado.')
+      if (data.password !== password) throw new Error('Contraseña incorrecta.')
       onLogin({ id: data.id, username: data.username, nombre: data.nombre })
-
     } catch (err) {
-      setError(err.message || 'Error al iniciar sesión.')
-      triggerShake()
-    } finally {
-      setLoading(false)
-    }
+      setError(err.message || 'Error al iniciar sesión.'); triggerShake()
+    } finally { setLoading(false) }
   }
 
-  function triggerShake() {
-    setShake(true)
-    setTimeout(() => setShake(false), 500)
+  const D = dark
+  const T = {
+    root: { display:'flex', height:'100vh', width:'100vw', fontFamily:"'DM Sans',sans-serif", overflow:'hidden', background: D?'#1d1d1b':'#fff' },
+    left: { width:'54%', position:'relative', overflow:'hidden', background: D?'#003366':'#0092DD', flexShrink:0, transition:'background .3s' },
+    right: { flex:1, background:D?'#1d1d1b':'#fff', display:'flex', flexDirection:'column', justifyContent:'center', padding:'38px 36px', overflowY:'auto', transition:'background .3s' },
+    thBtn: { position:'absolute', top:12, right:12, zIndex:20, background:'rgba(0,0,0,0.18)', border:'1px solid rgba(255,255,255,0.25)', borderRadius:20, color:'#fff', fontSize:13, padding:'5px 11px', cursor:'pointer', fontFamily:"'DM Sans',sans-serif" },
+    brandOverlay: { position:'absolute', bottom:0, left:0, right:0, padding:'26px 28px 28px', background:'linear-gradient(to top,rgba(0,92,169,0.96) 0%,rgba(0,92,169,0.55) 55%,transparent 100%)' },
+    brandEye: { fontSize:10, fontWeight:500, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(255,255,255,.6)', marginBottom:6 },
+    brandName: { fontFamily:"'Playfair Display',serif", fontSize:28, fontWeight:900, color:'#fff', lineHeight:1.1, marginBottom:4 },
+    brandSpan: { color:'#fdc533' },
+    brandCity: { fontSize:12, color:'rgba(255,255,255,.5)', fontWeight:300, letterSpacing:'.06em' },
+    overline: { fontSize:10, fontWeight:500, letterSpacing:'.16em', textTransform:'uppercase', color:'#0092DD', marginBottom:10, display:'flex', alignItems:'center', gap:8 },
+    obar: { width:18, height:2.5, background:'#e94362', borderRadius:2, flexShrink:0 },
+    h1: { fontFamily:"'Playfair Display',serif", fontSize:24, fontWeight:700, color:D?'#f5f8fc':'#1d1d1b', lineHeight:1.2, marginBottom:5 },
+    sub: { fontSize:13, color:'#C6C6C6', fontWeight:300, marginBottom:24 },
+    errBox: { display:'flex', alignItems:'center', gap:7, background:'rgba(233,67,98,0.08)', border:'1px solid rgba(233,67,98,0.25)', borderRadius:8, padding:'9px 12px', fontSize:13, color:'#e94362', marginBottom:12 },
+    fg: { marginBottom:13 },
+    label: { fontSize:10, fontWeight:500, letterSpacing:'.1em', textTransform:'uppercase', color:'#888', display:'block', marginBottom:5 },
+    wrap: (f) => ({ display:'flex', alignItems:'center', gap:9, border:`1.5px solid ${f?'#0092DD':D?'#2a2a28':'#ebebeb'}`, borderRadius:10, padding:'0 13px', background:f?(D?'#1d1d1b':'#fff'):(D?'#252523':'#fafafa'), boxShadow:f?'0 0 0 3px rgba(0,146,221,.12)':'none', transition:'border-color .2s,box-shadow .2s,background .3s' }),
+    icon: { width:15, height:15, color:'#C6C6C6', flexShrink:0 },
+    input: { flex:1, border:'none', background:'none', outline:'none', fontFamily:"'DM Sans',sans-serif", fontSize:14, color:D?'#f5f8fc':'#1d1d1b', padding:'12px 0' },
+    btn: { marginTop:4, width:'100%', display:'flex', alignItems:'center', justifyContent:'center', gap:8, background:'#0092DD', color:'#fff', border:'none', borderRadius:10, fontFamily:"'Playfair Display',serif", fontSize:15, fontWeight:700, padding:14, cursor:'pointer', boxShadow:'0 2px 14px rgba(0,146,221,.28)', transition:'background .2s,transform .1s', animation: shake?'shake .45s ease':'' },
+    foot: { marginTop:18, textAlign:'center', fontSize:11, color:'#C6C6C6', letterSpacing:'.05em', borderTop:`1px solid ${D?'#2a2a28':'#f0f0f0'}`, paddingTop:14 },
+    spinner: { display:'inline-block', width:16, height:16, border:'2px solid rgba(255,255,255,.3)', borderTopColor:'#fff', borderRadius:'50%', animation:'spin .7s linear infinite' },
   }
 
   return (
-    <div style={styles.root}>
-      {/* Canvas de fondo */}
-      <MapCanvas />
+    <div style={T.root}>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+      <style>{`
+        @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .tia-input::placeholder{color:#C6C6C6}
+        .tia-btn:hover:not(:disabled){background:#005ca9!important;box-shadow:0 4px 20px rgba(0,146,221,.38)!important}
+        .tia-btn:active:not(:disabled){transform:scale(.98)}
+        .tia-btn:disabled{opacity:.65;cursor:not-allowed}
+        .tia-theme:hover{background:rgba(0,0,0,0.32)!important}
+      `}</style>
 
-      {/* Gradiente radial de ambiente */}
-      <div style={styles.glow1} />
-      <div style={styles.glow2} />
-
-      {/* Cuadrícula sutil */}
-      <div style={styles.grid} />
-
-      {/* Tarjeta */}
-      <div style={{ ...styles.card, ...(shake ? styles.cardShake : {}) }}>
-
-        {/* Logo / Ícono */}
-        <div style={styles.logoWrap}>
-          <div style={styles.logoRing}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-              <circle cx="12" cy="9" r="2.5"/>
-            </svg>
-          </div>
-          <div style={styles.pulse} />
+      {/* Panel izquierdo: talavera */}
+      <div style={T.left}>
+        <button className="tia-theme" style={T.thBtn} onClick={() => setDark(!D)}>
+          {D ? '☀️ Claro' : '🌙 Oscuro'}
+        </button>
+        <TalaveraSVG dark={D}/>
+        <div style={T.brandOverlay}>
+          <p style={T.brandEye}>Organización sin fines de lucro</p>
+          <h2 style={T.brandName}>TECHO <span style={T.brandSpan}>Puebla</span></h2>
+          <p style={T.brandCity}>Sistema de análisis territorial · INEGI 2020</p>
         </div>
+      </div>
 
-        {/* Títulos */}
-        <div style={styles.titleBlock}>
-          <p style={styles.overline}>Sistema MV · Puebla</p>
-          <h1 style={styles.title}>Acceso al<br/>Sistema</h1>
-          <p style={styles.subtitle}>Análisis de Vulnerabilidad Social</p>
-        </div>
+      {/* Panel derecho: formulario */}
+      <div style={T.right}>
+        <div style={T.overline}><span style={T.obar}/>Acceso al sistema</div>
+        <h1 style={T.h1}>Bienvenido<br/>de vuelta</h1>
+        <p style={T.sub}>Ingresa tus credenciales para continuar</p>
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} style={styles.form}>
-
-          <div style={styles.field}>
-            <label style={styles.label}>Usuario</label>
-            <div style={{
-              ...styles.inputWrap,
-              ...(focused === 'user' ? styles.inputWrapFocus : {})
-            }}>
-              <svg style={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-              <input
-                type="text"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-                onFocus={() => setFocused('user')}
-                onBlur={() => setFocused(null)}
-                placeholder="tu_usuario"
-                autoComplete="username"
-                style={styles.input}
-                disabled={loading}
-              />
-            </div>
-          </div>
-
-          <div style={styles.field}>
-            <label style={styles.label}>Contraseña</label>
-            <div style={{
-              ...styles.inputWrap,
-              ...(focused === 'pass' ? styles.inputWrapFocus : {})
-            }}>
-              <svg style={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                onFocus={() => setFocused('pass')}
-                onBlur={() => setFocused(null)}
-                placeholder="••••••••"
-                autoComplete="current-password"
-                style={styles.input}
-                disabled={loading}
-              />
-            </div>
-          </div>
-
+        <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:0 }}>
           {error && (
-            <div style={styles.errorBox}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round">
+            <div style={T.errBox}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e94362" strokeWidth="2" strokeLinecap="round">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
               {error}
             </div>
           )}
 
-          <button type="submit" style={styles.btn} disabled={loading}>
-            {loading ? (
-              <span style={styles.spinner} />
-            ) : (
-              <>
-                Ingresar al sistema
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </>
-            )}
+          <div style={T.fg}>
+            <label style={T.label}>Usuario</label>
+            <div style={T.wrap(focused==='u')}>
+              <svg style={T.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+              <input className="tia-input" type="text" value={username}
+                onChange={e=>setUsername(e.target.value)}
+                onFocus={()=>setFocused('u')} onBlur={()=>setFocused(null)}
+                placeholder="tu_usuario" autoComplete="username" disabled={loading}
+                style={T.input}/>
+            </div>
+          </div>
+
+          <div style={T.fg}>
+            <label style={T.label}>Contraseña</label>
+            <div style={T.wrap(focused==='p')}>
+              <svg style={T.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <input className="tia-input" type="password" value={password}
+                onChange={e=>setPassword(e.target.value)}
+                onFocus={()=>setFocused('p')} onBlur={()=>setFocused(null)}
+                placeholder="••••••••" autoComplete="current-password" disabled={loading}
+                style={T.input}/>
+            </div>
+          </div>
+
+          <button className="tia-btn" type="submit" disabled={loading} style={T.btn}>
+            {loading
+              ? <span style={T.spinner}/>
+              : <>Ingresar al sistema
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </>
+            }
           </button>
         </form>
 
-        {/* Footer de la tarjeta */}
-        <p style={styles.cardFooter}>
-          Acceso restringido · datos protegidos
-        </p>
+        <p style={T.foot}>Acceso restringido · datos protegidos · Techo Puebla</p>
       </div>
-
-      {/* Footer global */}
-      <p style={styles.globalFooter}>
-        Proyecto MV · INEGI 2020 · Puebla, México
-      </p>
-
-      <style>{`
-        @keyframes shake {
-          0%,100%{transform:translateX(0) translateY(-50%)}
-          20%{transform:translateX(-10px) translateY(-50%)}
-          40%{transform:translateX(10px) translateY(-50%)}
-          60%{transform:translateX(-6px) translateY(-50%)}
-          80%{transform:translateX(6px) translateY(-50%)}
-        }
-        @keyframes pulse-ring {
-          0%{transform:scale(1);opacity:.6}
-          100%{transform:scale(2.2);opacity:0}
-        }
-        @keyframes spin {
-          to{transform:rotate(360deg)}
-        }
-        @keyframes fadeUp {
-          from{opacity:0;transform:translateY(20px) translateX(-50%)}
-          to{opacity:1;transform:translateY(0) translateX(-50%)}
-        }
-        input::placeholder { color: #475569; }
-        input:disabled { opacity: .5; cursor: not-allowed; }
-        button:not(:disabled):hover {
-          background: #16a34a !important;
-          box-shadow: 0 0 32px rgba(34,197,94,.35) !important;
-        }
-        button:not(:disabled):active { transform: scale(.98); }
-      `}</style>
     </div>
   )
-}
-
-/* ─── Estilos inline ─── */
-const styles = {
-  root: {
-    position: 'relative',
-    width: '100vw',
-    height: '100vh',
-    background: 'radial-gradient(ellipse at 60% 40%, #0d1f12 0%, #0b0f1a 60%)',
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  glow1: {
-    position: 'absolute',
-    width: 600,
-    height: 600,
-    borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(34,197,94,.08) 0%, transparent 70%)',
-    top: '-10%',
-    left: '60%',
-    pointerEvents: 'none',
-  },
-  glow2: {
-    position: 'absolute',
-    width: 400,
-    height: 400,
-    borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(14,165,233,.06) 0%, transparent 70%)',
-    bottom: '-5%',
-    left: '10%',
-    pointerEvents: 'none',
-  },
-  grid: {
-    position: 'absolute',
-    inset: 0,
-    backgroundImage: 'linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px)',
-    backgroundSize: '48px 48px',
-    pointerEvents: 'none',
-  },
-  card: {
-    position: 'relative',
-    zIndex: 10,
-    width: '100%',
-    maxWidth: 420,
-    background: 'rgba(17,24,39,.85)',
-    border: '1px solid rgba(255,255,255,.08)',
-    borderRadius: 20,
-    padding: '40px 36px 32px',
-    backdropFilter: 'blur(24px)',
-    boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(34,197,94,.06) inset',
-  },
-  cardShake: {
-    animation: 'shake .5s ease',
-  },
-  logoWrap: {
-    position: 'relative',
-    width: 56,
-    height: 56,
-    marginBottom: 24,
-  },
-  logoRing: {
-    width: 56,
-    height: 56,
-    borderRadius: '50%',
-    background: 'rgba(34,197,94,.1)',
-    border: '1.5px solid rgba(34,197,94,.35)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pulse: {
-    position: 'absolute',
-    inset: 0,
-    borderRadius: '50%',
-    border: '1.5px solid rgba(34,197,94,.4)',
-    animation: 'pulse-ring 2s ease-out infinite',
-  },
-  titleBlock: {
-    marginBottom: 28,
-  },
-  overline: {
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: 11,
-    fontWeight: 500,
-    letterSpacing: '0.12em',
-    textTransform: 'uppercase',
-    color: '#22c55e',
-    marginBottom: 8,
-  },
-  title: {
-    fontFamily: "'Syne', sans-serif",
-    fontSize: 32,
-    fontWeight: 800,
-    lineHeight: 1.15,
-    color: '#f1f5f9',
-    marginBottom: 6,
-  },
-  subtitle: {
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: 13,
-    color: '#64748b',
-    fontWeight: 300,
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 16,
-  },
-  field: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 6,
-  },
-  label: {
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: 11,
-    fontWeight: 500,
-    letterSpacing: '0.08em',
-    textTransform: 'uppercase',
-    color: '#94a3b8',
-  },
-  inputWrap: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-    background: 'rgba(255,255,255,.04)',
-    border: '1px solid rgba(255,255,255,.08)',
-    borderRadius: 10,
-    padding: '0 14px',
-    transition: 'border-color .2s, box-shadow .2s',
-  },
-  inputWrapFocus: {
-    borderColor: 'rgba(34,197,94,.5)',
-    boxShadow: '0 0 0 3px rgba(34,197,94,.08)',
-  },
-  inputIcon: {
-    width: 16,
-    height: 16,
-    color: '#475569',
-    flexShrink: 0,
-  },
-  input: {
-    flex: 1,
-    background: 'none',
-    border: 'none',
-    outline: 'none',
-    color: '#e2e8f0',
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: 14,
-    fontWeight: 400,
-    padding: '13px 0',
-  },
-  errorBox: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 7,
-    background: 'rgba(239,68,68,.08)',
-    border: '1px solid rgba(239,68,68,.2)',
-    borderRadius: 8,
-    padding: '9px 12px',
-    fontSize: 13,
-    color: '#fca5a5',
-    fontFamily: "'DM Sans', sans-serif",
-  },
-  btn: {
-    marginTop: 4,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    background: '#22c55e',
-    color: '#052e16',
-    fontFamily: "'Syne', sans-serif",
-    fontSize: 14,
-    fontWeight: 700,
-    letterSpacing: '.02em',
-    border: 'none',
-    borderRadius: 10,
-    padding: '14px 20px',
-    cursor: 'pointer',
-    transition: 'background .2s, box-shadow .2s, transform .1s',
-    boxShadow: '0 0 20px rgba(34,197,94,.2)',
-  },
-  spinner: {
-    display: 'inline-block',
-    width: 18,
-    height: 18,
-    border: '2px solid rgba(5,46,22,.3)',
-    borderTopColor: '#052e16',
-    borderRadius: '50%',
-    animation: 'spin .7s linear infinite',
-  },
-  cardFooter: {
-    marginTop: 20,
-    textAlign: 'center',
-    fontSize: 11,
-    color: '#334155',
-    fontFamily: "'DM Sans', sans-serif",
-    letterSpacing: '.06em',
-    textTransform: 'uppercase',
-  },
-  globalFooter: {
-    position: 'absolute',
-    bottom: 20,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    fontSize: 11,
-    color: '#1e293b',
-    fontFamily: "'DM Sans', sans-serif",
-    letterSpacing: '.08em',
-    whiteSpace: 'nowrap',
-    zIndex: 10,
-  },
 }
