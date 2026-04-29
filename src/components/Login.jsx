@@ -174,7 +174,7 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <div style={T.root}>
+    <div className="login-root" style={T.root}>
       <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
       <style>{`
         @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
@@ -184,10 +184,58 @@ export default function Login({ onLogin }) {
         .tia-btn:active:not(:disabled){transform:scale(.98)}
         .tia-btn:disabled{opacity:.65;cursor:not-allowed}
         .tia-theme:hover{background:rgba(0,0,0,0.32)!important}
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+          .login-root {
+            flex-direction: column !important;
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+          }
+          .login-left {
+            width: 100% !important;
+            height: 35vh !important;
+            flex-shrink: 0 !important;
+          }
+          .login-right {
+            padding: 28px 24px !important;
+            flex: none !important;
+            width: 100% !important;
+            min-height: auto !important;
+          }
+          .login-h1 {
+            font-size: 20px !important;
+          }
+          .login-sub {
+            font-size: 12px !important;
+            margin-bottom: 18px !important;
+          }
+          .login-overline {
+            font-size: 9px !important;
+            margin-bottom: 8px !important;
+          }
+          .login-label {
+            font-size: 9px !important;
+          }
+          .login-input {
+            font-size: 14px !important;
+            padding: 10px 0 !important;
+          }
+          .login-btn {
+            font-size: 14px !important;
+            padding: 12px !important;
+          }
+          .login-foot {
+            font-size: 10px !important;
+            margin-top: 14px !important;
+            padding-top: 10px !important;
+          }
+        }
       `}</style>
 
       {/* Panel izquierdo: talavera */}
-      <div style={T.left}>
+      <div className="login-left" style={T.left}>
         <button className="tia-theme" style={T.thBtn} onClick={() => setDark(!D)}>
           {D ? '☀️ Claro' : '🌙 Oscuro'}
         </button>
@@ -200,10 +248,10 @@ export default function Login({ onLogin }) {
       </div>
 
       {/* Panel derecho: formulario */}
-      <div style={T.right}>
-        <div style={T.overline}><span style={T.obar}/>Acceso al sistema</div>
-        <h1 style={T.h1}>Bienvenido<br/>de vuelta</h1>
-        <p style={T.sub}>Ingresa tus credenciales para continuar</p>
+      <div className="login-right" style={T.right}>
+        <div className="login-overline" style={T.overline}><span style={T.obar}/>Acceso al sistema</div>
+        <h1 className="login-h1" style={T.h1}>Bienvenido<br/>de vuelta</h1>
+        <p className="login-sub" style={T.sub}>Ingresa tus credenciales para continuar</p>
 
         <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:0 }}>
           {error && (
@@ -216,12 +264,12 @@ export default function Login({ onLogin }) {
           )}
 
           <div style={T.fg}>
-            <label style={T.label}>Usuario</label>
+            <label className="login-label" style={T.label}>Usuario</label>
             <div style={T.wrap(focused==='u')}>
               <svg style={T.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
               </svg>
-              <input className="tia-input" type="text" value={username}
+              <input className="tia-input login-input" type="text" value={username}
                 onChange={e=>setUsername(e.target.value)}
                 onFocus={()=>setFocused('u')} onBlur={()=>setFocused(null)}
                 placeholder="tu_usuario" autoComplete="username" disabled={loading}
@@ -230,12 +278,12 @@ export default function Login({ onLogin }) {
           </div>
 
           <div style={T.fg}>
-            <label style={T.label}>Contraseña</label>
+            <label className="login-label" style={T.label}>Contraseña</label>
             <div style={T.wrap(focused==='p')}>
               <svg style={T.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
-              <input className="tia-input" type="password" value={password}
+              <input className="tia-input login-input" type="password" value={password}
                 onChange={e=>setPassword(e.target.value)}
                 onFocus={()=>setFocused('p')} onBlur={()=>setFocused(null)}
                 placeholder="••••••••" autoComplete="current-password" disabled={loading}
@@ -243,7 +291,7 @@ export default function Login({ onLogin }) {
             </div>
           </div>
 
-          <button className="tia-btn" type="submit" disabled={loading} style={T.btn}>
+          <button className="tia-btn login-btn" type="submit" disabled={loading} style={T.btn}>
             {loading
               ? <span style={T.spinner}/>
               : <>Ingresar al sistema
@@ -255,7 +303,7 @@ export default function Login({ onLogin }) {
           </button>
         </form>
 
-        <p style={T.foot}>Acceso restringido · datos protegidos · Techo Puebla</p>
+        <p className="login-foot" style={T.foot}>Acceso restringido · datos protegidos · Techo Puebla</p>
       </div>
     </div>
   )
