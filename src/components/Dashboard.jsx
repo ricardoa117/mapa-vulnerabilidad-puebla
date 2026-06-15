@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import AnalysisTab from './AnalysisTab'
 
 /* ─── Paleta oficial Techo:
    Principal: #0092DD (celeste), #ffffff
@@ -8,6 +9,7 @@ import { useState, useEffect } from 'react'
 export default function Dashboard({ user, onLogout }) {
   const [confirm, setConfirm] = useState(false)
   const [dark,    setDark]    = useState(false)
+  const [activeTab, setActiveTab] = useState('mapa')
   const D = dark
 
   useEffect(() => {
@@ -138,14 +140,39 @@ export default function Dashboard({ user, onLogout }) {
         </div>
       </header>
 
-      {/* ── Mapa ── */}
-      <main style={{ flex:1, overflow:'hidden' }}>
-        <iframe
-          id="map-iframe"
-          src="/mapa_vulnerabilidad_combinado.html"
-          style={{ width:'100%', height:'100%', border:'none', display:'block' }}
-          title="Mapa de Vulnerabilidad — Techo Puebla"
-        />
+      {/* ── Tabs Navigation ── */}
+      <div style={{ display:'flex', borderBottom:`1px solid ${D?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)'}`, background:D?'#111110':'#ffffff', padding:'0 18px' }}>
+        <button onClick={() => setActiveTab('mapa')} style={{
+          background: 'none', border: 'none', padding: '12px 16px', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600,
+          color: activeTab === 'mapa' ? '#0092DD' : (D ? '#C6C6C6' : '#718096'),
+          borderBottom: activeTab === 'mapa' ? '2px solid #0092DD' : '2px solid transparent',
+          transition: 'all .2s'
+        }}>
+          🗺 Mapa Interactivo
+        </button>
+        <button onClick={() => setActiveTab('analisis')} style={{
+          background: 'none', border: 'none', padding: '12px 16px', cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600,
+          color: activeTab === 'analisis' ? '#0092DD' : (D ? '#C6C6C6' : '#718096'),
+          borderBottom: activeTab === 'analisis' ? '2px solid #0092DD' : '2px solid transparent',
+          transition: 'all .2s'
+        }}>
+          📊 Análisis de Datos
+        </button>
+      </div>
+
+      {/* ── Main Content ── */}
+      <main style={{ flex:1, overflow:'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: activeTab === 'mapa' ? 'block' : 'none', width: '100%', height: '100%' }}>
+          <iframe
+            id="map-iframe"
+            src="/mapa_vulnerabilidad_combinado.html"
+            style={{ width:'100%', height:'100%', border:'none', display:'block' }}
+            title="Mapa de Vulnerabilidad — Techo Puebla"
+          />
+        </div>
+        {activeTab === 'analisis' && (
+          <AnalysisTab dark={D} />
+        )}
       </main>
     </div>
   )
