@@ -268,11 +268,7 @@ body.light .leaflet-popup-tip {
     </select>
   </div>
 
-  <!-- Stats -->
-  <div class="sec">
-    <div class="sec-t">Resumen — <span id="lbl-capa">Capa B</span></div>
-    <div class="sg" id="stats-grid"></div>
-  </div>
+  
 
 </div><!-- /sidebar-fixed -->
 <div id="lista-wrapper"></div>
@@ -509,7 +505,7 @@ function dibujarComp() {
 function redibujar() {
   dibujarA(); dibujarB();
   if (document.getElementById('tog-comp').checked) dibujarComp();
-  actualizarLista(); actualizarStats();
+  actualizarLista(); 
 }
 
 // ══════════════════════════════════════════════════
@@ -557,18 +553,12 @@ function poblarNiveles() {
 document.getElementById('filtro-capa').addEventListener('change',()=>{
   document.getElementById('lbl-capa').textContent =
     document.getElementById('filtro-capa').value==='a'?'Capa A':'Capa B';
-  poblarNiveles(); actualizarLista(); actualizarStats();
+  poblarNiveles(); actualizarLista(); 
 });
 document.getElementById('buscar').addEventListener('input', actualizarLista);
 document.getElementById('filtro-nivel').addEventListener('change', () => { actualizarLista(); redibujar(); });
 
-// ══════════════════════════════════════════════════
-// STATS
-// ══════════════════════════════════════════════════
-function actualizarStats() {
-  const capa = document.getElementById('filtro-capa').value;
-  const ns = capa==='a'?DATOS.map(d=>d.nivel_a):datosB.map(d=>d.nivel_b);
-  const total = ns.length, c={};
+;
   ns.forEach(n=>{c[n]=(c[n]||0)+1;});
   document.getElementById('stats-grid').innerHTML =
     [['Bajo','c-b'],['Medio','c-m'],['Alto','c-a'],['Muy Alto','c-ma']].map(([n,cls])=>{
