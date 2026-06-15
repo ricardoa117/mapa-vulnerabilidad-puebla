@@ -30,10 +30,14 @@ export default function Dashboard({ user, onLogout }) {
       <style>{`
         .dash-btn:hover{opacity:.8}
         .dash-btn:active{transform:scale(.97)}
+        @media (max-width: 768px) {
+          .dash-text { display: none !important; }
+          .dash-header { padding: 0 10px !important; }
+        }
       `}</style>
 
       {/* ── Header ── */}
-      <header style={header}>
+      <header className="dash-header" style={header}>
 
         {/* Logo + nombre */}
         <div style={{ display:'flex', alignItems:'center', gap:10 }}>
@@ -47,7 +51,7 @@ export default function Dashboard({ user, onLogout }) {
             <div style={{ fontFamily:"'Playfair Display',serif", fontSize:13, fontWeight:700, color:D?'#f5f8fc':'#1d1d1b', lineHeight:1.2 }}>
               TECHO <span style={{ color:'#0092DD' }}>Puebla</span>
             </div>
-            <div style={{ fontSize:10, color:'#C6C6C6', letterSpacing:'.04em' }}>
+            <div className="dash-text" style={{ fontSize:10, color:'#C6C6C6', letterSpacing:'.04em' }}>
               Sistema de Análisis Territorial
             </div>
           </div>
@@ -82,7 +86,7 @@ export default function Dashboard({ user, onLogout }) {
             }}>
               {(user.nombre||user.username)[0].toUpperCase()}
             </div>
-            <div>
+            <div className="dash-text">
               <div style={{ fontSize:12, fontWeight:500, color:D?'#f5f8fc':'#1d1d1b', lineHeight:1.2 }}>
                 {user.nombre||user.username}
               </div>

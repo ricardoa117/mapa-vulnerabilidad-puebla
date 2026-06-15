@@ -124,6 +124,14 @@ input[type=range]{width:100%;accent-color:var(--cel)}
 .met-chip{display:inline-block;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:5px;letter-spacing:.03em}
 .chip-acp{background:rgba(149,75,151,0.15);color:#954b97}
 .chip-orig{background:rgba(253,197,51,0.15);color:#b8860b}
+/* Responsive */
+@media (max-width: 768px) {
+  #sidebar { width: 100% !important; min-width: 100% !important; height: 50vh !important; }
+  #app { flex-direction: column !important; }
+  #map { height: 50vh !important; flex: none !important; }
+  .s-hdr h1 { font-size: 11px !important; }
+  .sec { padding: 5px 10px !important; }
+}
 </style>
 </head>
 <body>
@@ -408,7 +416,9 @@ function popComp(d, b) {
 function dibujarA() {
   layerA.clearLayers();
   if (!document.getElementById('tog-a').checked) return;
+  const nivelFiltro = document.getElementById('filtro-nivel').value;
   DATOS.forEach(d => {
+    if (nivelFiltro && d.nivel_a !== nivelFiltro) return;
     const col = COL[d.nivel_a]||'#888';
     L.circleMarker([d.lat,d.lon], {
       radius:Math.max(4,4+d.indice_orig/22), color:col, fillColor:col, fillOpacity:.8, weight:1
@@ -419,7 +429,9 @@ function dibujarA() {
 function dibujarB() {
   layerB.clearLayers();
   if (!document.getElementById('tog-b').checked) return;
+  const nivelFiltro = document.getElementById('filtro-nivel').value;
   datosB.forEach(d => {
+    if (nivelFiltro && d.nivel_b !== nivelFiltro) return;
     const col = COL[d.nivel_b]||'#888';
     L.circleMarker([d.lat,d.lon], {
       radius:Math.max(4,4+(d.indice_b||0)/22), color:col, fillColor:col, fillOpacity:.8, weight:1
@@ -430,8 +442,10 @@ function dibujarB() {
 function dibujarComp() {
   layerComp.clearLayers();
   if (!document.getElementById('tog-comp').checked) return;
+  const nivelFiltro = document.getElementById('filtro-nivel').value;
   DATOS.forEach((d,i) => {
     const b = datosB[i];
+    if (nivelFiltro && d.nivel_a !== nivelFiltro && b.nivel_b !== nivelFiltro) return;
     const col = compColor(d.nivel_a, b.nivel_b);
     L.circleMarker([d.lat,d.lon], {radius:6,color:'#000',weight:.5,fillColor:col,fillOpacity:.92})
      .bindPopup(popComp(d,b),{maxWidth:300}).addTo(layerComp);
@@ -492,7 +506,7 @@ document.getElementById('filtro-capa').addEventListener('change',()=>{
   poblarNiveles(); actualizarLista(); actualizarStats();
 });
 document.getElementById('buscar').addEventListener('input', actualizarLista);
-document.getElementById('filtro-nivel').addEventListener('change', actualizarLista);
+document.getElementById('filtro-nivel').addEventListener('change', () => { actualizarLista(); redibujar(); });
 
 // ══════════════════════════════════════════════════
 // STATS
