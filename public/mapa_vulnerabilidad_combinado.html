@@ -68,9 +68,23 @@ body.light .s-hdr h1{color:#1a202c}
 .tog input:checked+.ttrack::after{transform:translateX(17px)}
 
 /* Inputs */
-.sbox{width:100%;padding:7px 10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg-inp);color:var(--txt);font-size:12px;outline:none;transition:background .2s,border-color .2s}
-.sbox:focus{border-color:var(--cel)}
-select.sbox{margin-top:5px;cursor:pointer}
+.sbox{width:100%;padding:7px 10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg-inp);color:var(--txt);font-size:12px;outline:none;transition:background .2s,border-color .2s,box-shadow .2s}
+.sbox:focus{border-color:var(--cel);box-shadow:0 0 0 3px rgba(0,146,221,0.15)}
+.sbox:hover{border-color:#4a5568}
+body.light .sbox:hover{border-color:#a0aec0}
+select.sbox{
+  margin-top:5px;
+  cursor:pointer;
+  appearance:none;
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C6C6C6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  background-size:14px;
+  padding-right:32px;
+}
+body.light select.sbox{
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
 
 /* Lista */
 .loc-row{padding:7px 13px;border-bottom:1px solid var(--row-b);cursor:pointer;transition:background .12s;display:flex;align-items:center;gap:7px}
@@ -552,7 +566,11 @@ const CORR = {
   SIN_DRENAJE:'corr=0.66', HACINAMIENTO:'corr=0.73'
 };
 
-function abrirPesos()  { construirSliders(); document.getElementById('panel-pesos').style.display='block'; }
+function abrirPesos() { 
+  construirSliders(); 
+  document.getElementById('panel-pesos').style.display='block'; 
+  document.getElementById('sidebar').classList.remove('open');
+}
 function cerrarPesos() { document.getElementById('panel-pesos').style.display='none'; }
 
 function construirSliders() {
@@ -623,8 +641,13 @@ redibujar();
 
 window.addEventListener('message', (event) => {
   if (event.data.type === 'THEME_CHANGE') {
-    if (event.data.dark) document.body.classList.remove('light');
-    else document.body.classList.add('light');
+    const isDark = event.data.dark;
+    if (modoOscuro !== isDark) {
+      modoOscuro = isDark;
+      document.body.classList.toggle('light', !modoOscuro);
+      map.removeLayer(tile);
+      tile = L.tileLayer(modoOscuro?TILES.dark:TILES.light, {attribution:'© OpenStreetMap © CARTO', maxZoom:19}).addTo(map);
+    }
   }
 });
 </script>
