@@ -126,12 +126,26 @@ input[type=range]{width:100%;accent-color:var(--cel)}
 .chip-orig{background:rgba(253,197,51,0.15);color:#b8860b}
 /* Responsive */
 @media (max-width: 768px) {
-  #sidebar { width: 100% !important; min-width: 100% !important; height: 50vh !important; }
+  #sidebar {
+    position: absolute;
+    bottom: 0; left: 0; width: 100% !important; min-width: 100% !important;
+    height: 80vh !important;
+    z-index: 1000;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    border-top: 2px solid var(--cel);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+  }
+  #sidebar.open { transform: translateY(0); }
   #app { flex-direction: column !important; }
-  #map { height: 50vh !important; flex: none !important; }
-  .s-hdr h1 { font-size: 11px !important; }
+  #map { height: 100vh !important; flex: none !important; }
+  .s-hdr h1 { font-size: 13px !important; }
   .sec { padding: 5px 10px !important; }
+  #btn-toggle-menu { display: block !important; }
+  #btn-close-menu { display: block !important; }
+  #sidebar-fixed { max-height: 45vh; }
 }
+#btn-toggle-menu, #btn-close-menu { display: none; }
 </style>
 </head>
 <body>
@@ -146,7 +160,7 @@ input[type=range]{width:100%;accent-color:var(--cel)}
       <h1>🗺 Vulnerabilidad Puebla <span style="color:#0092DD">· Techo</span></h1>
       <p>Percentiles reales vs. índice ACP por pesos</p>
     </div>
-    <button id="btn-theme" onclick="toggleTema()">🌙</button>
+    <button id="btn-close-menu" onclick="document.getElementById('sidebar').classList.remove('open')" style="background:none; border:none; color:var(--txt); font-size:20px; cursor:pointer; padding:0 8px;">✕</button>
   </div>
 
   <div id="nota-meta">
@@ -223,6 +237,7 @@ input[type=range]{width:100%;accent-color:var(--cel)}
 </div>
 
 <!-- ══ MAPA ══ -->
+<button id="btn-toggle-menu" onclick="document.getElementById('sidebar').classList.toggle('open')" style="position:absolute; bottom:24px; left:50%; transform:translateX(-50%); z-index:900; background:var(--cel); color:white; border:none; padding:10px 24px; border-radius:30px; font-size:14px; font-weight:bold; box-shadow:0 4px 12px rgba(0,0,0,0.4); cursor:pointer;">🗺 Menú y Filtros</button>
 <div id="map"></div>
 </div>
 
@@ -605,6 +620,13 @@ function aplicarPesos() {
 // ══════════════════════════════════════════════════
 poblarNiveles();
 redibujar();
+
+window.addEventListener('message', (event) => {
+  if (event.data.type === 'THEME_CHANGE') {
+    if (event.data.dark) document.body.classList.remove('light');
+    else document.body.classList.add('light');
+  }
+});
 </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 /* ─── Paleta oficial Techo:
    Principal: #0092DD (celeste), #ffffff
@@ -9,6 +9,13 @@ export default function Dashboard({ user, onLogout }) {
   const [confirm, setConfirm] = useState(false)
   const [dark,    setDark]    = useState(false)
   const D = dark
+
+  useEffect(() => {
+    const iframe = document.getElementById('map-iframe');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({ type: 'THEME_CHANGE', dark: dark }, '*');
+    }
+  }, [dark]);
 
   const header = {
     height: 52,
@@ -134,6 +141,7 @@ export default function Dashboard({ user, onLogout }) {
       {/* ── Mapa ── */}
       <main style={{ flex:1, overflow:'hidden' }}>
         <iframe
+          id="map-iframe"
           src="/mapa_vulnerabilidad_combinado.html"
           style={{ width:'100%', height:'100%', border:'none', display:'block' }}
           title="Mapa de Vulnerabilidad — Techo Puebla"
