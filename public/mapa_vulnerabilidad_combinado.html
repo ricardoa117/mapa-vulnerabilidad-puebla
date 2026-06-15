@@ -558,14 +558,6 @@ document.getElementById('filtro-capa').addEventListener('change',()=>{
 document.getElementById('buscar').addEventListener('input', actualizarLista);
 document.getElementById('filtro-nivel').addEventListener('change', () => { actualizarLista(); redibujar(); });
 
-;
-  ns.forEach(n=>{c[n]=(c[n]||0)+1;});
-  document.getElementById('stats-grid').innerHTML =
-    [['Bajo','c-b'],['Medio','c-m'],['Alto','c-a'],['Muy Alto','c-ma']].map(([n,cls])=>{
-      const v=c[n]||0;
-      return `<div class="sc"><div class="n ${cls}">${v}</div><div class="l">${n} (${total?(v/total*100).toFixed(0):0}%)</div></div>`;
-    }).join('');
-}
 
 // ══════════════════════════════════════════════════
 // PANEL PESOS
