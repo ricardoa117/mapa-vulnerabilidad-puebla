@@ -1,403 +1,938 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Vulnerabilidad Puebla — Techo</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-<style>
-/* ── PALETA TECHO ─────────────────────────────── */
-:root {
-  --cel:#0092DD; --azul:#005ca9; --rojo:#e94362; --ama:#fdc533;
-  --ver:#2fac66; --mora:#954b97; --neg:#1d1d1b; --gris:#C6C6C6;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vulnerabilidad Puebla — Techo</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <style>
+    /* ── PALETA TECHO ─────────────────────────────── */
+    :root {
+      --cel: #0092DD;
+      --azul: #005ca9;
+      --rojo: #e94362;
+      --ama: #fdc533;
+      --ver: #2fac66;
+      --mora: #954b97;
+      --neg: #1d1d1b;
+      --gris: #C6C6C6;
 
-  --bg-body:#0f1117; --bg-side:#161b27; --bg-card:#1a2035;
-  --bg-inp:#1a2035;  --bdr:#2d3748;     --txt:#e2e8f0;
-  --muted:#718096;   --row-h:#1e2533;   --row-b:#1e2536;
-  --btn-s:#2d3748;   --panel:#161b27;
-}
-body.light {
-  --bg-body:#f0f4f8; --bg-side:#ffffff; --bg-card:#edf2f7;
-  --bg-inp:#edf2f7;  --bdr:#cbd5e0;     --txt:#1a202c;
-  --muted:#718096;   --row-h:#e2e8f0;   --row-b:#e8edf3;
-  --btn-s:#e2e8f0;   --panel:#ffffff;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-body);color:var(--txt);height:100vh;overflow:hidden;transition:background .25s,color .25s}
-#app{display:flex;height:100vh}
-#sidebar{width:320px;min-width:280px;background:var(--bg-side);border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden;z-index:10;transition:background .25s,border-color .25s}
-#sidebar-fixed{flex-shrink:0;overflow-y:auto;max-height:62vh}
-#sidebar-fixed::-webkit-scrollbar{width:4px}
-#sidebar-fixed::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:4px}
-#lista-wrapper{flex:1;overflow-y:auto;min-height:80px}
-#lista-wrapper::-webkit-scrollbar{width:4px}
-#lista-wrapper::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:4px}
-#map{flex:1}
+      --bg-body: #0f1117;
+      --bg-side: #161b27;
+      --bg-card: #1a2035;
+      --bg-inp: #1a2035;
+      --bdr: #2d3748;
+      --txt: #e2e8f0;
+      --muted: #718096;
+      --row-h: #1e2533;
+      --row-b: #1e2536;
+      --btn-s: #2d3748;
+      --panel: #161b27;
+    }
 
-/* Header */
-.s-hdr{padding:11px 14px 9px;background:linear-gradient(135deg,#0f2d4a,#0a1f35);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
-body.light .s-hdr{background:linear-gradient(135deg,#ebf4ff,#dbeafe)}
-.s-hdr h1{font-size:13px;font-weight:700;color:#f7fafc;letter-spacing:.2px}
-body.light .s-hdr h1{color:#1a202c}
-.s-hdr p{font-size:10px;color:var(--muted);margin-top:2px}
-#btn-theme{background:none;border:1px solid var(--bdr);border-radius:20px;color:var(--txt);cursor:pointer;font-size:13px;padding:4px 9px;flex-shrink:0;transition:background .2s}
+    body.light {
+      --bg-body: #f0f4f8;
+      --bg-side: #ffffff;
+      --bg-card: #edf2f7;
+      --bg-inp: #edf2f7;
+      --bdr: #cbd5e0;
+      --txt: #1a202c;
+      --muted: #718096;
+      --row-h: #e2e8f0;
+      --row-b: #e8edf3;
+      --btn-s: #e2e8f0;
+      --panel: #ffffff;
+    }
 
-/* Sección */
-.sec{padding:9px 13px;border-bottom:1px solid var(--bdr);flex-shrink:0}
-.sec-t{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);margin-bottom:7px}
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-/* Nota metodológica */
-#nota-meta{font-size:10px;color:var(--muted);padding:7px 13px;border-bottom:1px solid var(--bdr);line-height:1.55;flex-shrink:0}
-#nota-meta b{color:var(--cel)}
-#nota-sesgo{font-size:10px;background:rgba(253,197,51,0.08);border-left:2px solid var(--ama);padding:6px 10px;margin:6px 13px;border-radius:0 6px 6px 0;color:var(--muted);line-height:1.5;display:none}
-#nota-sesgo.on{display:block}
-#btn-sesgo{font-size:10px;color:var(--ama);cursor:pointer;background:none;border:none;padding:0;text-decoration:underline;margin-left:4px}
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-body);
+      color: var(--txt);
+      height: 100vh;
+      overflow: hidden;
+      transition: background .25s, color .25s
+    }
 
-/* Toggles */
-.lr{display:flex;align-items:center;justify-content:space-between;padding:5px 0}
-.ll{display:flex;align-items:center;gap:7px}
-.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.dot-a{background:#f6ad55} .dot-b{background:#68d391}
-.dot-comp{background:linear-gradient(135deg,#f6ad55 50%,#68d391 50%)}
-.tog{position:relative;width:38px;height:21px;flex-shrink:0}
-.tog input{opacity:0;width:0;height:0;position:absolute}
-.ttrack{position:absolute;inset:0;border-radius:21px;background:var(--bdr);cursor:pointer;transition:background .2s}
-.tog input:checked+.ttrack{background:var(--cel)}
-.ttrack::after{content:'';position:absolute;left:3px;top:2.5px;width:16px;height:16px;border-radius:50%;background:white;transition:transform .2s}
-.tog input:checked+.ttrack::after{transform:translateX(17px)}
+    #app {
+      display: flex;
+      height: 100vh
+    }
 
-/* Inputs */
-.sbox{width:100%;padding:7px 10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg-inp);color:var(--txt);font-size:12px;outline:none;transition:background .2s,border-color .2s,box-shadow .2s}
-.sbox:focus{border-color:var(--cel);box-shadow:0 0 0 3px rgba(0,146,221,0.15)}
-.sbox:hover{border-color:#4a5568}
-body.light .sbox:hover{border-color:#a0aec0}
-select.sbox{
-  margin-top:5px;
-  cursor:pointer;
-  appearance:none;
-  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C6C6C6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat:no-repeat;
-  background-position:right 12px center;
-  background-size:14px;
-  padding-right:32px;
-}
-body.light select.sbox{
-  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-}
+    #sidebar {
+      width: 320px;
+      min-width: 280px;
+      background: var(--bg-side);
+      border-right: 1px solid var(--bdr);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 10;
+      transition: background .25s, border-color .25s
+    }
 
-/* Lista */
-.loc-row{padding:7px 13px;border-bottom:1px solid var(--row-b);cursor:pointer;transition:background .12s;display:flex;align-items:center;gap:7px}
-.loc-row:hover{background:var(--row-h)}
-.badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:20px;white-space:nowrap;flex-shrink:0}
-.nb-bajo{background:#276749;color:#9ae6b4}
-.nb-medio{background:#2a4365;color:#90cdf4}
-.nb-alto{background:#744210;color:#fbd38d}
-.nb-muyalto{background:#742a2a;color:#feb2b2}
-.nb-nd{background:#2d3748;color:#718096}
-body.light .nb-bajo{background:#c6f6d5;color:#276749}
-body.light .nb-medio{background:#bee3f8;color:#2a4365}
-body.light .nb-alto{background:#fefcbf;color:#744210}
-body.light .nb-muyalto{background:#fed7d7;color:#742a2a}
-.loc-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.loc-sub{font-size:10px;color:var(--muted)}
+    #sidebar-fixed {
+      flex-shrink: 0;
+      overflow-y: auto;
+      max-height: 62vh
+    }
 
-/* Stats */
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}
-.sc{background:var(--bg-card);border-radius:7px;padding:7px;text-align:center}
-.sc .n{font-size:17px;font-weight:700}.sc .l{font-size:9px;color:var(--muted);margin-top:1px}
-.c-b{color:#48bb78}.c-m{color:#4299e1}.c-a{color:#ed8936}.c-ma{color:#fc5c5c}
+    #sidebar-fixed::-webkit-scrollbar {
+      width: 4px
+    }
 
-/* Panel pesos */
-#panel-pesos{display:none;position:absolute;top:52px;right:10px;z-index:500;width:320px;background:var(--panel);border:1px solid var(--bdr);border-radius:12px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,.45);max-height:85vh;overflow-y:auto}
-#panel-pesos h3{font-size:13px;font-weight:700;margin-bottom:3px}
-.pp-sub{font-size:10px;color:var(--muted);margin-bottom:12px;line-height:1.5}
-.sl-row{margin-bottom:9px}
-.sl-row label{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:3px}
-.sl-row .peso-corr{font-size:9px;color:var(--ama);margin-left:4px}
-input[type=range]{width:100%;accent-color:var(--cel)}
-.s-ok{color:#48bb78;font-size:11px;font-weight:700}
-.s-err{color:#fc8181;font-size:11px;font-weight:700}
+    #sidebar-fixed::-webkit-scrollbar-thumb {
+      background: var(--bdr);
+      border-radius: 4px
+    }
 
-/* Botones */
-.btn{border:none;cursor:pointer;border-radius:7px;font-size:12px;font-weight:600;padding:7px 11px;transition:opacity .15s}
-.btn:hover{opacity:.85}
-.btn-p{background:var(--cel);color:white}
-.btn-s{background:var(--btn-s);color:var(--txt)}
-.btn-d{background:#e53e3e;color:white}
-.btn-row{display:flex;gap:5px;margin-top:9px}
-.btn-full{width:100%;margin-top:5px}
+    #lista-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 80px
+    }
 
-/* Leyenda comparación */
-#leyenda-comp{display:none;position:absolute;bottom:26px;left:326px;z-index:400;background:var(--panel);opacity:.97;border:1px solid var(--bdr);border-radius:10px;padding:11px 13px;font-size:11px}
-#leyenda-comp h4{font-size:11px;font-weight:700;margin-bottom:7px}
-.leg{display:flex;align-items:center;gap:7px;margin-bottom:4px}
-.leg-d{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+    #lista-wrapper::-webkit-scrollbar {
+      width: 4px
+    }
 
-/* Chip de metodología */
-.met-chip{display:inline-block;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:5px;letter-spacing:.03em}
-.chip-acp{background:rgba(149,75,151,0.15);color:#954b97}
-.chip-orig{background:rgba(253,197,51,0.15);color:#b8860b}
-/* Responsive */
-@media (max-width: 768px) {
-  #sidebar {
-    position: absolute;
-    bottom: 0; left: 0; width: 100% !important; min-width: 100% !important;
-    height: 80vh !important;
-    z-index: 1000;
-    transform: translateY(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    border-top: 2px solid var(--cel);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-  }
-  #sidebar.open { transform: translateY(0); }
-  #app { flex-direction: column !important; }
-  #map { height: 100vh !important; flex: none !important; }
-  .s-hdr h1 { font-size: 13px !important; }
-  .sec { padding: 5px 10px !important; }
-  #btn-toggle-menu { display: block !important; }
-  #btn-close-menu { display: block !important; }
-  #sidebar-fixed { max-height: 45vh; }
-}
-#btn-toggle-menu, #btn-close-menu { display: none; }
+    #lista-wrapper::-webkit-scrollbar-thumb {
+      background: var(--bdr);
+      border-radius: 4px
+    }
 
-/* Popups Glassmorphism */
-.leaflet-popup-content-wrapper {
-  background: rgba(26, 32, 53, 0.85) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #e2e8f0 !important;
-  border-radius: 16px !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
-}
-.leaflet-popup-tip {
-  background: rgba(26, 32, 53, 0.85) !important;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-body.light .leaflet-popup-content-wrapper {
-  background: rgba(255, 255, 255, 0.85) !important;
-  border: 1px solid rgba(0,0,0,0.1);
-  color: #1a202c !important;
-}
-body.light .leaflet-popup-tip {
-  background: rgba(255, 255, 255, 0.85) !important;
-  border: 1px solid rgba(0,0,0,0.1);
-}
-</style>
+    #map {
+      flex: 1
+    }
+
+    /* Header */
+    .s-hdr {
+      padding: 11px 14px 9px;
+      background: linear-gradient(135deg, #0f2d4a, #0a1f35);
+      border-bottom: 1px solid var(--bdr);
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    body.light .s-hdr {
+      background: linear-gradient(135deg, #ebf4ff, #dbeafe)
+    }
+
+    .s-hdr h1 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f7fafc;
+      letter-spacing: .2px
+    }
+
+    body.light .s-hdr h1 {
+      color: #1a202c
+    }
+
+    .s-hdr p {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    #btn-theme {
+      background: none;
+      border: 1px solid var(--bdr);
+      border-radius: 20px;
+      color: var(--txt);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 4px 9px;
+      flex-shrink: 0;
+      transition: background .2s
+    }
+
+    /* Sección */
+    .sec {
+      padding: 9px 13px;
+      border-bottom: 1px solid var(--bdr);
+      flex-shrink: 0
+    }
+
+    .sec-t {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .9px;
+      color: var(--muted);
+      margin-bottom: 7px
+    }
+
+    /* Nota metodológica */
+    #nota-meta {
+      font-size: 10px;
+      color: var(--muted);
+      padding: 7px 13px;
+      border-bottom: 1px solid var(--bdr);
+      line-height: 1.55;
+      flex-shrink: 0
+    }
+
+    #nota-meta b {
+      color: var(--cel)
+    }
+
+    #nota-sesgo {
+      font-size: 10px;
+      background: rgba(253, 197, 51, 0.08);
+      border-left: 2px solid var(--ama);
+      padding: 6px 10px;
+      margin: 6px 13px;
+      border-radius: 0 6px 6px 0;
+      color: var(--muted);
+      line-height: 1.5;
+      display: none
+    }
+
+    #nota-sesgo.on {
+      display: block
+    }
+
+    #btn-sesgo {
+      font-size: 10px;
+      color: var(--ama);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      text-decoration: underline;
+      margin-left: 4px
+    }
+
+    /* Toggles */
+    .lr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 0
+    }
+
+    .ll {
+      display: flex;
+      align-items: center;
+      gap: 7px
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .dot-a {
+      background: #f6ad55
+    }
+
+    .dot-b {
+      background: #68d391
+    }
+
+    .dot-comp {
+      background: linear-gradient(135deg, #f6ad55 50%, #68d391 50%)
+    }
+
+    .tog {
+      position: relative;
+      width: 38px;
+      height: 21px;
+      flex-shrink: 0
+    }
+
+    .tog input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute
+    }
+
+    .ttrack {
+      position: absolute;
+      inset: 0;
+      border-radius: 21px;
+      background: var(--bdr);
+      cursor: pointer;
+      transition: background .2s
+    }
+
+    .tog input:checked+.ttrack {
+      background: var(--cel)
+    }
+
+    .ttrack::after {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 2.5px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      transition: transform .2s
+    }
+
+    .tog input:checked+.ttrack::after {
+      transform: translateX(17px)
+    }
+
+    /* Inputs */
+    .sbox {
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--bdr);
+      background: var(--bg-inp);
+      color: var(--txt);
+      font-size: 12px;
+      outline: none;
+      transition: background .2s, border-color .2s, box-shadow .2s
+    }
+
+    .sbox:focus {
+      border-color: var(--cel);
+      box-shadow: 0 0 0 3px rgba(0, 146, 221, 0.15)
+    }
+
+    .sbox:hover {
+      border-color: #4a5568
+    }
+
+    body.light .sbox:hover {
+      border-color: #a0aec0
+    }
+
+    select.sbox {
+      margin-top: 5px;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C6C6C6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 14px;
+      padding-right: 32px;
+    }
+
+    body.light select.sbox {
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    }
+
+    /* Lista */
+    .loc-row {
+      padding: 7px 13px;
+      border-bottom: 1px solid var(--row-b);
+      cursor: pointer;
+      transition: background .12s;
+      display: flex;
+      align-items: center;
+      gap: 7px
+    }
+
+    .loc-row:hover {
+      background: var(--row-h)
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0
+    }
+
+    .nb-bajo {
+      background: #276749;
+      color: #9ae6b4
+    }
+
+    .nb-medio {
+      background: #2a4365;
+      color: #90cdf4
+    }
+
+    .nb-alto {
+      background: #744210;
+      color: #fbd38d
+    }
+
+    .nb-muyalto {
+      background: #742a2a;
+      color: #feb2b2
+    }
+
+    .nb-nd {
+      background: #2d3748;
+      color: #718096
+    }
+
+    body.light .nb-bajo {
+      background: #c6f6d5;
+      color: #276749
+    }
+
+    body.light .nb-medio {
+      background: #bee3f8;
+      color: #2a4365
+    }
+
+    body.light .nb-alto {
+      background: #fefcbf;
+      color: #744210
+    }
+
+    body.light .nb-muyalto {
+      background: #fed7d7;
+      color: #742a2a
+    }
+
+    .loc-name {
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .loc-sub {
+      font-size: 10px;
+      color: var(--muted)
+    }
+
+    /* Stats */
+    .sg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin-top: 7px
+    }
+
+    .sc {
+      background: var(--bg-card);
+      border-radius: 7px;
+      padding: 7px;
+      text-align: center
+    }
+
+    .sc .n {
+      font-size: 17px;
+      font-weight: 700
+    }
+
+    .sc .l {
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 1px
+    }
+
+    .c-b {
+      color: #48bb78
+    }
+
+    .c-m {
+      color: #4299e1
+    }
+
+    .c-a {
+      color: #ed8936
+    }
+
+    .c-ma {
+      color: #fc5c5c
+    }
+
+    /* Panel pesos */
+    #panel-pesos {
+      display: none;
+      position: absolute;
+      top: 52px;
+      right: 10px;
+      z-index: 500;
+      width: 320px;
+      background: var(--panel);
+      border: 1px solid var(--bdr);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .45);
+      max-height: 85vh;
+      overflow-y: auto
+    }
+
+    #panel-pesos h3 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px
+    }
+
+    .pp-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      line-height: 1.5
+    }
+
+    .sl-row {
+      margin-bottom: 9px
+    }
+
+    .sl-row label {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 3px
+    }
+
+    .sl-row .peso-corr {
+      font-size: 9px;
+      color: var(--ama);
+      margin-left: 4px
+    }
+
+    input[type=range] {
+      width: 100%;
+      accent-color: var(--cel)
+    }
+
+    .s-ok {
+      color: #48bb78;
+      font-size: 11px;
+      font-weight: 700
+    }
+
+    .s-err {
+      color: #fc8181;
+      font-size: 11px;
+      font-weight: 700
+    }
+
+    /* Botones */
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 11px;
+      transition: opacity .15s
+    }
+
+    .btn:hover {
+      opacity: .85
+    }
+
+    .btn-p {
+      background: var(--cel);
+      color: white
+    }
+
+    .btn-s {
+      background: var(--btn-s);
+      color: var(--txt)
+    }
+
+    .btn-d {
+      background: #e53e3e;
+      color: white
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 5px;
+      margin-top: 9px
+    }
+
+    .btn-full {
+      width: 100%;
+      margin-top: 5px
+    }
+
+    /* Leyenda comparación */
+    #leyenda-comp {
+      display: none;
+      position: absolute;
+      bottom: 26px;
+      left: 326px;
+      z-index: 400;
+      background: var(--panel);
+      opacity: .97;
+      border: 1px solid var(--bdr);
+      border-radius: 10px;
+      padding: 11px 13px;
+      font-size: 11px
+    }
+
+    #leyenda-comp h4 {
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 7px
+    }
+
+    .leg {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 4px
+    }
+
+    .leg-d {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    /* Chip de metodología */
+    .met-chip {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+      margin-left: 5px;
+      letter-spacing: .03em
+    }
+
+    .chip-acp {
+      background: rgba(149, 75, 151, 0.15);
+      color: #954b97
+    }
+
+    .chip-orig {
+      background: rgba(253, 197, 51, 0.15);
+      color: #b8860b
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      #sidebar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 80vh !important;
+        z-index: 1000;
+        transform: translateY(100%);
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        border-top: 2px solid var(--cel);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      #sidebar.open {
+        transform: translateY(0);
+      }
+
+      #app {
+        flex-direction: column !important;
+      }
+
+      #map {
+        height: 100vh !important;
+        flex: none !important;
+      }
+
+      .s-hdr h1 {
+        font-size: 13px !important;
+      }
+
+      .sec {
+        padding: 5px 10px !important;
+      }
+
+      #btn-toggle-menu {
+        display: block !important;
+      }
+
+      #btn-close-menu {
+        display: block !important;
+      }
+
+      #sidebar-fixed {
+        max-height: 45vh;
+      }
+    }
+
+    #btn-toggle-menu,
+    #btn-close-menu {
+      display: none;
+    }
+
+    /* Popups Glassmorphism */
+    .leaflet-popup-content-wrapper {
+      background: rgba(26, 32, 53, 0.85) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0 !important;
+      border-radius: 16px !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .leaflet-popup-tip {
+      background: rgba(26, 32, 53, 0.85) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    body.light .leaflet-popup-content-wrapper {
+      background: rgba(255, 255, 255, 0.85) !important;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      color: #1a202c !important;
+    }
+
+    body.light .leaflet-popup-tip {
+      background: rgba(255, 255, 255, 0.85) !important;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  </style>
 
 </head>
+
 <body>
-<div id="app">
+  <div id="app">
 
-<!-- ══ SIDEBAR ══ -->
-<div id="sidebar">
-<div id="sidebar-fixed">
+    <!-- ══ SIDEBAR ══ -->
+    <div id="sidebar">
+      <div id="sidebar-fixed">
 
-  <div class="s-hdr">
-    <div>
-      <h1>🗺 Vulnerabilidad Puebla <span style="color:#0092DD">· Techo</span></h1>
-      <p>Percentiles reales vs. índice ACP por pesos</p>
-    </div>
-    <button id="btn-close-menu" onclick="document.getElementById('sidebar').classList.remove('open')" style="background:none; border:none; color:var(--txt); font-size:20px; cursor:pointer; padding:0 8px;">✕</button>
-  </div>
-
-  <div id="nota-meta">
-    <b>Capa A</b>: índice original · promedio de 6 variables → normalización 0-100 · percentiles del dataset (p25=18.76 · p50=25.38 · p75=31.19).<br/>
-    <b>Capa B</b>: variables normalizadas individualmente · pesos ajustables · umbrales adaptativos.
-    <button id="btn-sesgo" onclick="document.getElementById('nota-sesgo').classList.toggle('on')">¿Qué sesgo tiene?</button>
-  </div>
-  <div id="nota-sesgo">
-    <b>Sesgo conocido Capa A:</b> HACINAMIENTO (escala 0-14) se promedia junto a porcentajes (0-100) sin normalizar. Aporta ~3% de varianza efectiva en lugar del 16.7% teórico. El índice está dominado por %_PISO_TIERRA (media 51%). Aun así, empata con estudios de campo porque las localidades extremas tienen todos los indicadores altos simultáneamente.<br/>
-    <b>Capa B corrige esto</b> normalizando cada variable a 0-100 antes de ponderar.
-  </div>
-
-  <!-- Capas -->
-  <div class="sec">
-    <div class="sec-t">Capas del mapa</div>
-    <div class="lr">
-      <div class="ll">
-        <div class="dot dot-a"></div>
-        <div>
-          <div style="font-size:12px;font-weight:600">Capa A — Percentiles
-            <span class="met-chip chip-orig">ORIGINAL</span>
+        <div class="s-hdr">
+          <div>
+            <h1> Vulnerabilidad Puebla <span style="color:#0092DD">· Techo</span></h1>
+            <p>Percentiles reales vs. índice ACP por pesos</p>
           </div>
-          <div style="font-size:10px;color:var(--muted)">No editable · fiel a estudios de campo</div>
+          <button id="btn-close-menu" onclick="document.getElementById('sidebar').classList.remove('open')"
+            style="background:none; border:none; color:var(--txt); font-size:20px; cursor:pointer; padding:0 8px;">✕</button>
         </div>
-      </div>
-      <label class="tog"><input type="checkbox" id="tog-a" checked><div class="ttrack"></div></label>
-    </div>
-    <div class="lr">
-      <div class="ll">
-        <div class="dot dot-b"></div>
-        <div>
-          <div style="font-size:12px;font-weight:600">Capa B — Pesos ajustables
-            <span class="met-chip chip-acp">ACP</span>
+
+        <div id="nota-meta">
+          <b>Capa A</b>: índice original · promedio de 6 variables → normalización 0-100 · percentiles del dataset
+          (p25=18.76 · p50=25.38 · p75=31.19).<br />
+          <b>Capa B</b>: variables normalizadas individualmente · pesos ajustables · umbrales adaptativos.
+          <button id="btn-sesgo" onclick="document.getElementById('nota-sesgo').classList.toggle('on')">¿Qué sesgo
+            tiene?</button>
+        </div>
+        <div id="nota-sesgo">
+          <b>Sesgo conocido Capa A:</b> HACINAMIENTO (escala 0-14) se promedia junto a porcentajes (0-100) sin
+          normalizar. Aporta ~3% de varianza efectiva en lugar del 16.7% teórico. El índice está dominado por
+          %_PISO_TIERRA (media 51%). Aun así, empata con estudios de campo porque las localidades extremas tienen todos
+          los indicadores altos simultáneamente.<br />
+          <b>Capa B corrige esto</b> normalizando cada variable a 0-100 antes de ponderar.
+        </div>
+
+        <!-- Capas -->
+        <div class="sec">
+          <div class="sec-t">Capas del mapa</div>
+          <div class="lr">
+            <div class="ll">
+              <div class="dot dot-a"></div>
+              <div>
+                <div style="font-size:12px;font-weight:600">Capa A — Percentiles
+                  <span class="met-chip chip-orig">ORIGINAL</span>
+                </div>
+                <div style="font-size:10px;color:var(--muted)">No editable · fiel a estudios de campo</div>
+              </div>
+            </div>
+            <label class="tog"><input type="checkbox" id="tog-a" checked>
+              <div class="ttrack"></div>
+            </label>
           </div>
-          <div style="font-size:10px;color:var(--muted)">Variables normalizadas · pesos estadísticos</div>
+          <div class="lr">
+            <div class="ll">
+              <div class="dot dot-b"></div>
+              <div>
+                <div style="font-size:12px;font-weight:600">Capa B — Pesos ajustables
+                  <span class="met-chip chip-acp">ACP</span>
+                </div>
+                <div style="font-size:10px;color:var(--muted)">Variables normalizadas · pesos estadísticos</div>
+              </div>
+            </div>
+            <label class="tog"><input type="checkbox" id="tog-b" checked>
+              <div class="ttrack"></div>
+            </label>
+          </div>
+          <div class="lr">
+            <div class="ll">
+              <div class="dot dot-comp"></div>
+              <div>
+                <div style="font-size:12px;font-weight:600">Modo comparación</div>
+                <div style="font-size:10px;color:var(--muted)">¿Coinciden A y B?</div>
+              </div>
+            </div>
+            <label class="tog"><input type="checkbox" id="tog-comp">
+              <div class="ttrack"></div>
+            </label>
+          </div>
+          <button class="btn btn-s btn-full" onclick="abrirPesos()">⚙ Ajustar pesos — Capa B</button>
         </div>
-      </div>
-      <label class="tog"><input type="checkbox" id="tog-b" checked><div class="ttrack"></div></label>
-    </div>
-    <div class="lr">
-      <div class="ll">
-        <div class="dot dot-comp"></div>
-        <div>
-          <div style="font-size:12px;font-weight:600">Modo comparación</div>
-          <div style="font-size:10px;color:var(--muted)">¿Coinciden A y B?</div>
+
+        <!-- Buscar -->
+        <div class="sec">
+          <div class="sec-t">Buscar y filtrar</div>
+          <input id="buscar" class="sbox" placeholder="Localidad o municipio…" />
+          <select id="filtro-capa" class="sbox">
+            <option value="b">Lista Capa B (pesos ACP)</option>
+            <option value="a">Lista Capa A (percentiles)</option>
+          </select>
+          <select id="filtro-nivel" class="sbox">
+            <option value="">Todos los niveles</option>
+          </select>
         </div>
-      </div>
-      <label class="tog"><input type="checkbox" id="tog-comp"><div class="ttrack"></div></label>
+
+
+
+      </div><!-- /sidebar-fixed -->
+      <div id="lista-wrapper"></div>
     </div>
-    <button class="btn btn-s btn-full" onclick="abrirPesos()">⚙ Ajustar pesos — Capa B</button>
+
+    <!-- ══ MAPA ══ -->
+    <button id="btn-toggle-menu" onclick="document.getElementById('sidebar').classList.toggle('open')"
+      style="position:absolute; bottom:24px; left:50%; transform:translateX(-50%); z-index:900; background:var(--cel); color:white; border:none; padding:10px 24px; border-radius:30px; font-size:14px; font-weight:bold; box-shadow:0 4px 12px rgba(0,0,0,0.4); cursor:pointer;">🗺
+      Menú y Filtros</button>
+    <div id="map"></div>
   </div>
 
-  <!-- Buscar -->
-  <div class="sec">
-    <div class="sec-t">Buscar y filtrar</div>
-    <input id="buscar" class="sbox" placeholder="Localidad o municipio…"/>
-    <select id="filtro-capa" class="sbox">
-      <option value="b">Lista Capa B (pesos ACP)</option>
-      <option value="a">Lista Capa A (percentiles)</option>
-    </select>
-    <select id="filtro-nivel" class="sbox">
-      <option value="">Todos los niveles</option>
-    </select>
+  <!-- Panel pesos -->
+  <div id="panel-pesos">
+    <h3>⚙ Ajustar pesos — Capa B</h3>
+    <div class="pp-sub">
+      Variables normalizadas 0-100 antes de ponderar.<br />
+      Pesos por defecto: ACP del dataset real. La suma se normaliza al aplicar.
+    </div>
+    <div id="sliders-area"></div>
+    <div style="margin-top:7px" id="suma-display"></div>
+    <div class="btn-row">
+      <button class="btn btn-p" onclick="aplicarPesos()">✓ Aplicar</button>
+      <button class="btn btn-s" onclick="restablecerPesos()">↺ ACP</button>
+      <button class="btn btn-s" onclick="restablecerIguales()">= Iguales</button>
+      <button class="btn btn-d" onclick="cerrarPesos()">✕</button>
+    </div>
   </div>
 
-  
-
-</div><!-- /sidebar-fixed -->
-<div id="lista-wrapper"></div>
-</div>
-
-<!-- ══ MAPA ══ -->
-<button id="btn-toggle-menu" onclick="document.getElementById('sidebar').classList.toggle('open')" style="position:absolute; bottom:24px; left:50%; transform:translateX(-50%); z-index:900; background:var(--cel); color:white; border:none; padding:10px 24px; border-radius:30px; font-size:14px; font-weight:bold; box-shadow:0 4px 12px rgba(0,0,0,0.4); cursor:pointer;">🗺 Menú y Filtros</button>
-<div id="map"></div>
-</div>
-
-<!-- Panel pesos -->
-<div id="panel-pesos">
-  <h3>⚙ Ajustar pesos — Capa B</h3>
-  <div class="pp-sub">
-    Variables normalizadas 0-100 antes de ponderar.<br/>
-    Pesos por defecto: ACP del dataset real. La suma se normaliza al aplicar.
+  <!-- Leyenda comparación -->
+  <div id="leyenda-comp">
+    <h4>🔍 Modo comparación</h4>
+    <div class="leg">
+      <div class="leg-d" style="background:#48bb78"></div>Coinciden (mismo nivel)
+    </div>
+    <div class="leg">
+      <div class="leg-d" style="background:#f6e05e"></div>Difieren 1 nivel
+    </div>
+    <div class="leg">
+      <div class="leg-d" style="background:#fc8181"></div>Difieren 2+ niveles · revisar
+    </div>
   </div>
-  <div id="sliders-area"></div>
-  <div style="margin-top:7px" id="suma-display"></div>
-  <div class="btn-row">
-    <button class="btn btn-p" onclick="aplicarPesos()">✓ Aplicar</button>
-    <button class="btn btn-s" onclick="restablecerPesos()">↺ ACP</button>
-    <button class="btn btn-s" onclick="restablecerIguales()">= Iguales</button>
-    <button class="btn btn-d" onclick="cerrarPesos()">✕</button>
-  </div>
-</div>
 
-<!-- Leyenda comparación -->
-<div id="leyenda-comp">
-  <h4>🔍 Modo comparación</h4>
-  <div class="leg"><div class="leg-d" style="background:#48bb78"></div>Coinciden (mismo nivel)</div>
-  <div class="leg"><div class="leg-d" style="background:#f6e05e"></div>Difieren 1 nivel</div>
-  <div class="leg"><div class="leg-d" style="background:#fc8181"></div>Difieren 2+ niveles · revisar</div>
-</div>
+  <script>
+    // ══════════════════════════════════════════════════
+    // DATOS Y CONFIGURACIÓN
+    // ══════════════════════════════════════════════════
+    let DATOS = [];
+    const META = { "p25": 18.76, "p50": 25.38, "p75": 31.19, "pb25": 17.93, "pb50": 22.68, "pb75": 26.49, "maxs": { "NO_ESCOLAR": 100.0, "ANALFABETISMO": 85.7143, "PISO_TIERRA": 100.0, "SIN_AGUA": 100.0, "SIN_DRENAJE": 100.0, "HACINAMIENTO": 13.5 }, "pesos_acp": { "NO_ESCOLAR": 0.1147, "ANALFABETISMO": 0.1699, "PISO_TIERRA": 0.1923, "SIN_AGUA": 0.1409, "SIN_DRENAJE": 0.1615, "HACINAMIENTO": 0.2207 } };
+    const MAXS = { "NO_ESCOLAR": 100.0, "ANALFABETISMO": 85.7143, "PISO_TIERRA": 100.0, "SIN_AGUA": 100.0, "SIN_DRENAJE": 100.0, "HACINAMIENTO": 13.5 };
+    const PESOS_ACP = { "NO_ESCOLAR": 0.1147, "ANALFABETISMO": 0.1699, "PISO_TIERRA": 0.1923, "SIN_AGUA": 0.1409, "SIN_DRENAJE": 0.1615, "HACINAMIENTO": 0.2207 };
+    const PESOS_IGUALES = {
+      NO_ESCOLAR: 0.1667, ANALFABETISMO: 0.1667, PISO_TIERRA: 0.1667,
+      SIN_AGUA: 0.1667, SIN_DRENAJE: 0.1667, HACINAMIENTO: 0.1667
+    };
 
-<script>
-// ══════════════════════════════════════════════════
-// DATOS Y CONFIGURACIÓN
-// ══════════════════════════════════════════════════
-let DATOS = [];
-const META     = {"p25": 18.76, "p50": 25.38, "p75": 31.19, "pb25": 17.93, "pb50": 22.68, "pb75": 26.49, "maxs": {"NO_ESCOLAR": 100.0, "ANALFABETISMO": 85.7143, "PISO_TIERRA": 100.0, "SIN_AGUA": 100.0, "SIN_DRENAJE": 100.0, "HACINAMIENTO": 13.5}, "pesos_acp": {"NO_ESCOLAR": 0.1147, "ANALFABETISMO": 0.1699, "PISO_TIERRA": 0.1923, "SIN_AGUA": 0.1409, "SIN_DRENAJE": 0.1615, "HACINAMIENTO": 0.2207}};
-const MAXS     = {"NO_ESCOLAR": 100.0, "ANALFABETISMO": 85.7143, "PISO_TIERRA": 100.0, "SIN_AGUA": 100.0, "SIN_DRENAJE": 100.0, "HACINAMIENTO": 13.5};
-const PESOS_ACP = {"NO_ESCOLAR": 0.1147, "ANALFABETISMO": 0.1699, "PISO_TIERRA": 0.1923, "SIN_AGUA": 0.1409, "SIN_DRENAJE": 0.1615, "HACINAMIENTO": 0.2207};
-const PESOS_IGUALES = {
-  NO_ESCOLAR:0.1667, ANALFABETISMO:0.1667, PISO_TIERRA:0.1667,
-  SIN_AGUA:0.1667, SIN_DRENAJE:0.1667, HACINAMIENTO:0.1667
-};
+    // Pesos actuales (inician en ACP)
+    let pesos = { ...PESOS_ACP };
 
-// Pesos actuales (inician en ACP)
-let pesos = {...PESOS_ACP};
+    // Umbrales adaptativos de Capa B (percentiles del idx_b con pesos ACP)
+    let PB25 = META.pb25, PB50 = META.pb50, PB75 = META.pb75;
 
-// Umbrales adaptativos de Capa B (percentiles del idx_b con pesos ACP)
-let PB25 = META.pb25, PB50 = META.pb50, PB75 = META.pb75;
+    // ── Calcular índice B ──────────────────────────────
+    function calcIdxB(d, pw) {
+      const total = Object.values(pw).reduce((a, b) => a + b, 0);
+      const norm = k => Math.min(100, (d[k.toLowerCase()] || 0) / MAXS[k] * 100);
+      return (
+        norm('NO_ESCOLAR') * pw.NO_ESCOLAR +
+        norm('ANALFABETISMO') * pw.ANALFABETISMO +
+        norm('PISO_TIERRA') * pw.PISO_TIERRA +
+        norm('SIN_AGUA') * pw.SIN_AGUA +
+        norm('SIN_DRENAJE') * pw.SIN_DRENAJE +
+        norm('HACINAMIENTO') * pw.HACINAMIENTO
+      ) / total;
+    }
 
-// ── Calcular índice B ──────────────────────────────
-function calcIdxB(d, pw) {
-  const total = Object.values(pw).reduce((a,b)=>a+b, 0);
-  const norm = k => Math.min(100, (d[k.toLowerCase()] || 0) / MAXS[k] * 100);
-  return (
-    norm('NO_ESCOLAR')    * pw.NO_ESCOLAR    +
-    norm('ANALFABETISMO') * pw.ANALFABETISMO +
-    norm('PISO_TIERRA')   * pw.PISO_TIERRA   +
-    norm('SIN_AGUA')      * pw.SIN_AGUA      +
-    norm('SIN_DRENAJE')   * pw.SIN_DRENAJE   +
-    norm('HACINAMIENTO')  * pw.HACINAMIENTO
-  ) / total;
-}
+    // ── Clasificar con umbrales adaptativos ─────────────
+    function nivelB(v) {
+      if (v <= PB25) return 'Bajo';
+      if (v <= PB50) return 'Medio';
+      if (v <= PB75) return 'Alto';
+      return 'Muy Alto';
+    }
 
-// ── Clasificar con umbrales adaptativos ─────────────
-function nivelB(v) {
-  if (v <= PB25) return 'Bajo';
-  if (v <= PB50) return 'Medio';
-  if (v <= PB75) return 'Alto';
-  return 'Muy Alto';
-}
+    // ── Recalcular umbrales cuando cambian pesos ────────
+    function recalcUmbrales(pw) {
+      const vals = DATOS.map(d => calcIdxB(d, pw)).sort((a, b) => a - b);
+      const n = vals.length;
+      PB25 = vals[Math.floor(n * 0.25)];
+      PB50 = vals[Math.floor(n * 0.50)];
+      PB75 = vals[Math.floor(n * 0.75)];
+    }
 
-// ── Recalcular umbrales cuando cambian pesos ────────
-function recalcUmbrales(pw) {
-  const vals = DATOS.map(d => calcIdxB(d, pw)).sort((a,b)=>a-b);
-  const n = vals.length;
-  PB25 = vals[Math.floor(n*0.25)];
-  PB50 = vals[Math.floor(n*0.50)];
-  PB75 = vals[Math.floor(n*0.75)];
-}
+    // Copia de Capa B con índice calculado
+    let datosB = [];
 
-// Copia de Capa B con índice calculado
-let datosB = [];
+    // ══════════════════════════════════════════════════
+    // MAPA Y TILES
+    // ══════════════════════════════════════════════════
+    let modoOscuro = true;
+    const TILES = {
+      dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    };
+    const map = L.map('map', { center: [19.278239306528285, -97.81913736779335], zoom: 9 });
+    let tile = L.tileLayer(TILES.dark, { attribution: '© OpenStreetMap © CARTO', maxZoom: 19 }).addTo(map);
 
-// ══════════════════════════════════════════════════
-// MAPA Y TILES
-// ══════════════════════════════════════════════════
-let modoOscuro = true;
-const TILES = {
-  dark:  'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-  light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-};
-const map = L.map('map', {center:[19.278239306528285,-97.81913736779335], zoom:9});
-let tile = L.tileLayer(TILES.dark, {attribution:'© OpenStreetMap © CARTO', maxZoom:19}).addTo(map);
+    function toggleTema() {
+      modoOscuro = !modoOscuro;
+      document.body.classList.toggle('light', !modoOscuro);
+      document.getElementById('btn-theme').textContent = modoOscuro ? '🌙' : '☀️';
+      map.removeLayer(tile);
+      tile = L.tileLayer(modoOscuro ? TILES.dark : TILES.light, { attribution: '© OpenStreetMap © CARTO', maxZoom: 19 }).addTo(map);
+    }
 
-function toggleTema() {
-  modoOscuro = !modoOscuro;
-  document.body.classList.toggle('light', !modoOscuro);
-  document.getElementById('btn-theme').textContent = modoOscuro ? '🌙' : '☀️';
-  map.removeLayer(tile);
-  tile = L.tileLayer(modoOscuro?TILES.dark:TILES.light, {attribution:'© OpenStreetMap © CARTO', maxZoom:19}).addTo(map);
-}
+    let layerA = L.markerClusterGroup({ maxClusterRadius: 40 }).addTo(map);
+    let layerB = L.markerClusterGroup({ maxClusterRadius: 40 }).addTo(map);
+    let layerComp = L.markerClusterGroup({ maxClusterRadius: 40 });
 
-let layerA    = L.markerClusterGroup({ maxClusterRadius: 40 }).addTo(map);
-let layerB    = L.markerClusterGroup({ maxClusterRadius: 40 }).addTo(map);
-let layerComp = L.markerClusterGroup({ maxClusterRadius: 40 });
+    // ══════════════════════════════════════════════════
+    // COLORES
+    // ══════════════════════════════════════════════════
+    const COL = { Bajo: '#48bb78', Medio: '#4299e1', Alto: '#ed8936', 'Muy Alto': '#fc5c5c' };
+    const NI = { Bajo: 1, Medio: 2, Alto: 3, 'Muy Alto': 4 };
+    function compColor(nA, nB) {
+      const d = Math.abs((NI[nA] || 0) - (NI[nB] || 0));
+      return d === 0 ? '#48bb78' : d === 1 ? '#f6e05e' : '#fc8181';
+    }
+    function bClass(n) {
+      return { Bajo: 'nb-bajo', Medio: 'nb-medio', Alto: 'nb-alto', 'Muy Alto': 'nb-muyalto' }[n] || 'nb-nd';
+    }
 
-// ══════════════════════════════════════════════════
-// COLORES
-// ══════════════════════════════════════════════════
-const COL = {Bajo:'#48bb78', Medio:'#4299e1', Alto:'#ed8936', 'Muy Alto':'#fc5c5c'};
-const NI  = {Bajo:1, Medio:2, Alto:3, 'Muy Alto':4};
-function compColor(nA,nB) {
-  const d = Math.abs((NI[nA]||0)-(NI[nB]||0));
-  return d===0?'#48bb78':d===1?'#f6e05e':'#fc8181';
-}
-function bClass(n) {
-  return {Bajo:'nb-bajo',Medio:'nb-medio',Alto:'nb-alto','Muy Alto':'nb-muyalto'}[n]||'nb-nd';
-}
-
-// ══════════════════════════════════════════════════
-// POPUPS
-// ══════════════════════════════════════════════════
-function popA(d) {
-  return `<div style="font-family:Segoe UI;min-width:210px">
+    // ══════════════════════════════════════════════════
+    // POPUPS
+    // ══════════════════════════════════════════════════
+    function popA(d) {
+      return `<div style="font-family:Segoe UI;min-width:210px">
     <b style="font-size:13px">${d.nombre}</b>
     <div style="font-size:11px;opacity:0.7">${d.municipio}</div>
     <hr style="border:none;border-top:1px solid rgba(136,136,136,0.3);margin:6px 0"/>
@@ -409,44 +944,44 @@ function popA(d) {
     </div>
     <hr style="border:none;border-top:1px solid rgba(136,136,136,0.3);margin:5px 0"/>
     <table style="font-size:10px;width:100%">
-      <tr><td>Sin escolaridad</td><td style="text-align:right">${(d.no_escolar||0).toFixed(1)}%</td></tr>
-      <tr><td>Analfabetismo</td><td style="text-align:right">${(d.analfabetismo||0).toFixed(1)}%</td></tr>
-      <tr><td>Piso tierra</td><td style="text-align:right">${(d.piso_tierra||0).toFixed(1)}%</td></tr>
-      <tr><td>Sin agua</td><td style="text-align:right">${(d.sin_agua||0).toFixed(1)}%</td></tr>
-      <tr><td>Sin drenaje</td><td style="text-align:right">${(d.sin_drenaje||0).toFixed(1)}%</td></tr>
-      <tr><td>Hacinamiento</td><td style="text-align:right">${(d.hacinamiento||0).toFixed(2)} p/viv</td></tr>
+      <tr><td>Sin escolaridad</td><td style="text-align:right">${(d.no_escolar || 0).toFixed(1)}%</td></tr>
+      <tr><td>Analfabetismo</td><td style="text-align:right">${(d.analfabetismo || 0).toFixed(1)}%</td></tr>
+      <tr><td>Piso tierra</td><td style="text-align:right">${(d.piso_tierra || 0).toFixed(1)}%</td></tr>
+      <tr><td>Sin agua</td><td style="text-align:right">${(d.sin_agua || 0).toFixed(1)}%</td></tr>
+      <tr><td>Sin drenaje</td><td style="text-align:right">${(d.sin_drenaje || 0).toFixed(1)}%</td></tr>
+      <tr><td>Hacinamiento</td><td style="text-align:right">${(d.hacinamiento || 0).toFixed(2)} p/viv</td></tr>
     </table>
-    <div style="font-size:9px;opacity:0.6;margin-top:4px">Pob: ${(d.poblacion||0).toLocaleString()}</div>
+    <div style="font-size:9px;opacity:0.6;margin-top:4px">Pob: ${(d.poblacion || 0).toLocaleString()}</div>
   </div>`;
-}
+    }
 
-function popB(d) {
-  const norm = k => Math.min(100,(d[k.toLowerCase()]||0)/MAXS[k]*100).toFixed(1);
-  return `<div style="font-family:Segoe UI;min-width:220px">
+    function popB(d) {
+      const norm = k => Math.min(100, (d[k.toLowerCase()] || 0) / MAXS[k] * 100).toFixed(1);
+      return `<div style="font-family:Segoe UI;min-width:220px">
     <b style="font-size:13px">${d.nombre}</b>
     <div style="font-size:11px;opacity:0.7">${d.municipio}</div>
     <hr style="border:none;border-top:1px solid rgba(136,136,136,0.3);margin:6px 0"/>
     <b style="color:${COL[d.nivel_b]};font-size:13px">● ${d.nivel_b}</b>
-    <div style="font-size:11px;margin-top:4px">Índice B: <b>${(d.indice_b||0).toFixed(1)}</b></div>
+    <div style="font-size:11px;margin-top:4px">Índice B: <b>${(d.indice_b || 0).toFixed(1)}</b></div>
     <div style="font-size:10px;opacity:0.6;margin-top:2px">Umbrales: p25=${PB25.toFixed(1)} · p50=${PB50.toFixed(1)} · p75=${PB75.toFixed(1)}</div>
     <hr style="border:none;border-top:1px solid rgba(136,136,136,0.3);margin:5px 0"/>
     <table style="font-size:10px;width:100%;border-collapse:collapse">
       <tr style="opacity:0.6"><th>Variable</th><th>Valor</th><th>Norm.</th><th>Peso</th></tr>
-      <tr><td>Sin escolaridad</td><td>${(d.no_escolar||0).toFixed(1)}%</td><td>${norm('NO_ESCOLAR')}</td><td>${(pesos.NO_ESCOLAR*100).toFixed(0)}%</td></tr>
-      <tr><td>Analfabetismo</td><td>${(d.analfabetismo||0).toFixed(1)}%</td><td>${norm('ANALFABETISMO')}</td><td>${(pesos.ANALFABETISMO*100).toFixed(0)}%</td></tr>
-      <tr><td>Piso tierra</td><td>${(d.piso_tierra||0).toFixed(1)}%</td><td>${norm('PISO_TIERRA')}</td><td>${(pesos.PISO_TIERRA*100).toFixed(0)}%</td></tr>
-      <tr><td>Sin agua</td><td>${(d.sin_agua||0).toFixed(1)}%</td><td>${norm('SIN_AGUA')}</td><td>${(pesos.SIN_AGUA*100).toFixed(0)}%</td></tr>
-      <tr><td>Sin drenaje</td><td>${(d.sin_drenaje||0).toFixed(1)}%</td><td>${norm('SIN_DRENAJE')}</td><td>${(pesos.SIN_DRENAJE*100).toFixed(0)}%</td></tr>
-      <tr><td>Hacinamiento</td><td>${(d.hacinamiento||0).toFixed(2)}</td><td>${norm('HACINAMIENTO')}</td><td>${(pesos.HACINAMIENTO*100).toFixed(0)}%</td></tr>
+      <tr><td>Sin escolaridad</td><td>${(d.no_escolar || 0).toFixed(1)}%</td><td>${norm('NO_ESCOLAR')}</td><td>${(pesos.NO_ESCOLAR * 100).toFixed(0)}%</td></tr>
+      <tr><td>Analfabetismo</td><td>${(d.analfabetismo || 0).toFixed(1)}%</td><td>${norm('ANALFABETISMO')}</td><td>${(pesos.ANALFABETISMO * 100).toFixed(0)}%</td></tr>
+      <tr><td>Piso tierra</td><td>${(d.piso_tierra || 0).toFixed(1)}%</td><td>${norm('PISO_TIERRA')}</td><td>${(pesos.PISO_TIERRA * 100).toFixed(0)}%</td></tr>
+      <tr><td>Sin agua</td><td>${(d.sin_agua || 0).toFixed(1)}%</td><td>${norm('SIN_AGUA')}</td><td>${(pesos.SIN_AGUA * 100).toFixed(0)}%</td></tr>
+      <tr><td>Sin drenaje</td><td>${(d.sin_drenaje || 0).toFixed(1)}%</td><td>${norm('SIN_DRENAJE')}</td><td>${(pesos.SIN_DRENAJE * 100).toFixed(0)}%</td></tr>
+      <tr><td>Hacinamiento</td><td>${(d.hacinamiento || 0).toFixed(2)}</td><td>${norm('HACINAMIENTO')}</td><td>${(pesos.HACINAMIENTO * 100).toFixed(0)}%</td></tr>
     </table>
-    <div style="font-size:9px;opacity:0.6;margin-top:4px">Pob: ${(d.poblacion||0).toLocaleString()}</div>
+    <div style="font-size:9px;opacity:0.6;margin-top:4px">Pob: ${(d.poblacion || 0).toLocaleString()}</div>
   </div>`;
-}
+    }
 
-function popComp(d, b) {
-  const col = compColor(d.nivel_a, b.nivel_b);
-  const txt = col==='#48bb78'?'Coinciden':col==='#f6e05e'?'Difieren 1 nivel':'Difieren 2+ niveles — revisar datos';
-  return `<div style="font-family:Segoe UI;min-width:230px">
+    function popComp(d, b) {
+      const col = compColor(d.nivel_a, b.nivel_b);
+      const txt = col === '#48bb78' ? 'Coinciden' : col === '#f6e05e' ? 'Difieren 1 nivel' : 'Difieren 2+ niveles — revisar datos';
+      return `<div style="font-family:Segoe UI;min-width:230px">
     <b style="font-size:13px">${d.nombre}</b>
     <div style="font-size:11px;opacity:0.7">${d.municipio}</div>
     <hr style="border:none;border-top:1px solid rgba(136,136,136,0.3);margin:6px 0"/>
@@ -454,218 +989,219 @@ function popComp(d, b) {
       <tr><td><span style="color:#f6ad55">■</span> A (percentiles)</td>
           <td style="text-align:right"><b style="color:${COL[d.nivel_a]}">${d.nivel_a}</b> (${d.indice_orig})</td></tr>
       <tr><td><span style="color:#68d391">■</span> B (pesos ACP)</td>
-          <td style="text-align:right"><b style="color:${COL[b.nivel_b]}">${b.nivel_b}</b> (${(b.indice_b||0).toFixed(1)})</td></tr>
+          <td style="text-align:right"><b style="color:${COL[b.nivel_b]}">${b.nivel_b}</b> (${(b.indice_b || 0).toFixed(1)})</td></tr>
     </table>
     <div style="margin-top:8px;font-size:11px;font-weight:700;color:${col}">● ${txt}</div>
   </div>`;
-}
+    }
 
-// ══════════════════════════════════════════════════
-// DIBUJAR
-// ══════════════════════════════════════════════════
-function dibujarA() {
-  layerA.clearLayers();
-  if (!document.getElementById('tog-a').checked) return;
-  const nivelFiltro = document.getElementById('filtro-nivel').value;
-  DATOS.forEach(d => {
-    if (nivelFiltro && d.nivel_a !== nivelFiltro) return;
-    const col = COL[d.nivel_a]||'#888';
-    L.circleMarker([d.lat,d.lon], {
-      radius:Math.max(4,4+d.indice_orig/22), color:col, fillColor:col, fillOpacity:.8, weight:1
-    }).bindPopup(popA(d),{maxWidth:300}).addTo(layerA);
-  });
-}
+    // ══════════════════════════════════════════════════
+    // DIBUJAR
+    // ══════════════════════════════════════════════════
+    function dibujarA() {
+      layerA.clearLayers();
+      if (!document.getElementById('tog-a').checked) return;
+      const nivelFiltro = document.getElementById('filtro-nivel').value;
+      DATOS.forEach(d => {
+        if (nivelFiltro && d.nivel_a !== nivelFiltro) return;
+        const col = COL[d.nivel_a] || '#888';
+        L.circleMarker([d.lat, d.lon], {
+          radius: Math.max(4, 4 + d.indice_orig / 22), color: col, fillColor: col, fillOpacity: .8, weight: 1
+        }).bindPopup(popA(d), { maxWidth: 300 }).addTo(layerA);
+      });
+    }
 
-function dibujarB() {
-  layerB.clearLayers();
-  if (!document.getElementById('tog-b').checked) return;
-  const nivelFiltro = document.getElementById('filtro-nivel').value;
-  datosB.forEach(d => {
-    if (nivelFiltro && d.nivel_b !== nivelFiltro) return;
-    const col = COL[d.nivel_b]||'#888';
-    L.circleMarker([d.lat,d.lon], {
-      radius:Math.max(4,4+(d.indice_b||0)/22), color:col, fillColor:col, fillOpacity:.8, weight:1
-    }).bindPopup(popB(d),{maxWidth:320}).addTo(layerB);
-  });
-}
+    function dibujarB() {
+      layerB.clearLayers();
+      if (!document.getElementById('tog-b').checked) return;
+      const nivelFiltro = document.getElementById('filtro-nivel').value;
+      datosB.forEach(d => {
+        if (nivelFiltro && d.nivel_b !== nivelFiltro) return;
+        const col = COL[d.nivel_b] || '#888';
+        L.circleMarker([d.lat, d.lon], {
+          radius: Math.max(4, 4 + (d.indice_b || 0) / 22), color: col, fillColor: col, fillOpacity: .8, weight: 1
+        }).bindPopup(popB(d), { maxWidth: 320 }).addTo(layerB);
+      });
+    }
 
-function dibujarComp() {
-  layerComp.clearLayers();
-  if (!document.getElementById('tog-comp').checked) return;
-  const nivelFiltro = document.getElementById('filtro-nivel').value;
-  DATOS.forEach((d,i) => {
-    const b = datosB[i];
-    if (nivelFiltro && d.nivel_a !== nivelFiltro && b.nivel_b !== nivelFiltro) return;
-    const col = compColor(d.nivel_a, b.nivel_b);
-    L.circleMarker([d.lat,d.lon], {radius:6,color:'#000',weight:.5,fillColor:col,fillOpacity:.92})
-     .bindPopup(popComp(d,b),{maxWidth:300}).addTo(layerComp);
-  });
-}
+    function dibujarComp() {
+      layerComp.clearLayers();
+      if (!document.getElementById('tog-comp').checked) return;
+      const nivelFiltro = document.getElementById('filtro-nivel').value;
+      DATOS.forEach((d, i) => {
+        const b = datosB[i];
+        if (nivelFiltro && d.nivel_a !== nivelFiltro && b.nivel_b !== nivelFiltro) return;
+        const col = compColor(d.nivel_a, b.nivel_b);
+        L.circleMarker([d.lat, d.lon], { radius: 6, color: '#000', weight: .5, fillColor: col, fillOpacity: .92 })
+          .bindPopup(popComp(d, b), { maxWidth: 300 }).addTo(layerComp);
+      });
+    }
 
-function redibujar() {
-  dibujarA(); dibujarB();
-  if (document.getElementById('tog-comp').checked) dibujarComp();
-  actualizarLista(); 
-}
+    function redibujar() {
+      dibujarA(); dibujarB();
+      if (document.getElementById('tog-comp').checked) dibujarComp();
+      actualizarLista();
+    }
 
-// ══════════════════════════════════════════════════
-// TOGGLES
-// ══════════════════════════════════════════════════
-document.getElementById('tog-a').addEventListener('change', dibujarA);
-document.getElementById('tog-b').addEventListener('change', ()=>{dibujarB();actualizarLista();});
-document.getElementById('tog-comp').addEventListener('change', function() {
-  document.getElementById('leyenda-comp').style.display = this.checked?'block':'none';
-  if (this.checked) {layerComp.addTo(map);dibujarComp();}
-  else map.removeLayer(layerComp);
-});
+    // ══════════════════════════════════════════════════
+    // TOGGLES
+    // ══════════════════════════════════════════════════
+    document.getElementById('tog-a').addEventListener('change', dibujarA);
+    document.getElementById('tog-b').addEventListener('change', () => { dibujarB(); actualizarLista(); });
+    document.getElementById('tog-comp').addEventListener('change', function () {
+      document.getElementById('leyenda-comp').style.display = this.checked ? 'block' : 'none';
+      if (this.checked) { layerComp.addTo(map); dibujarComp(); }
+      else map.removeLayer(layerComp);
+    });
 
-// ══════════════════════════════════════════════════
-// LISTA
-// ══════════════════════════════════════════════════
-function actualizarLista() {
-  const txt   = document.getElementById('buscar').value.toLowerCase().trim();
-  const nivel = document.getElementById('filtro-nivel').value;
-  const capa  = document.getElementById('filtro-capa').value;
-  const datos = capa==='a'
-    ? DATOS.map(d=>  ({...d,_n:d.nivel_a,_i:d.indice_orig}))
-    : datosB.map(d=> ({...d,_n:d.nivel_b,_i:d.indice_b}));
-  const fil = datos.filter(d=>
-    (!txt || d.nombre.toLowerCase().includes(txt) || d.municipio.toLowerCase().includes(txt)) &&
-    (!nivel || d._n===nivel)
-  ).slice(0,400);
-  document.getElementById('lista-wrapper').innerHTML = fil.map(d=>`
+    // ══════════════════════════════════════════════════
+    // LISTA
+    // ══════════════════════════════════════════════════
+    function actualizarLista() {
+      const txt = document.getElementById('buscar').value.toLowerCase().trim();
+      const nivel = document.getElementById('filtro-nivel').value;
+      const capa = document.getElementById('filtro-capa').value;
+      const datos = capa === 'a'
+        ? DATOS.map(d => ({ ...d, _n: d.nivel_a, _i: d.indice_orig }))
+        : datosB.map(d => ({ ...d, _n: d.nivel_b, _i: d.indice_b }));
+      const fil = datos.filter(d =>
+        (!txt || d.nombre.toLowerCase().includes(txt) || d.municipio.toLowerCase().includes(txt)) &&
+        (!nivel || d._n === nivel)
+      ).slice(0, 400);
+      document.getElementById('lista-wrapper').innerHTML = fil.map(d => `
     <div class="loc-row" onclick="map.setView([${d.lat},${d.lon}],13)">
       <div style="flex:1;min-width:0">
-        <div class="loc-name">${d.nombre||'—'}</div>
-        <div class="loc-sub">${d.municipio} · ${(d._i||0).toFixed(1)}</div>
+        <div class="loc-name">${d.nombre || '—'}</div>
+        <div class="loc-sub">${d.municipio} · ${(d._i || 0).toFixed(1)}</div>
       </div>
       <div class="badge ${bClass(d._n)}">${d._n}</div>
     </div>`).join('');
-}
+    }
 
-function poblarNiveles() {
-  const capa = document.getElementById('filtro-capa').value;
-  const ns = [...new Set(capa==='a'?DATOS.map(d=>d.nivel_a):datosB.map(d=>d.nivel_b))].sort();
-  document.getElementById('filtro-nivel').innerHTML =
-    '<option value="">Todos los niveles</option>' + ns.map(n=>`<option>${n}</option>`).join('');
-}
+    function poblarNiveles() {
+      const capa = document.getElementById('filtro-capa').value;
+      const ns = [...new Set(capa === 'a' ? DATOS.map(d => d.nivel_a) : datosB.map(d => d.nivel_b))].sort();
+      document.getElementById('filtro-nivel').innerHTML =
+        '<option value="">Todos los niveles</option>' + ns.map(n => `<option>${n}</option>`).join('');
+    }
 
-document.getElementById('filtro-capa').addEventListener('change',()=>{
-  document.getElementById('lbl-capa').textContent =
-    document.getElementById('filtro-capa').value==='a'?'Capa A':'Capa B';
-  poblarNiveles(); actualizarLista(); 
-});
-document.getElementById('buscar').addEventListener('input', actualizarLista);
-document.getElementById('filtro-nivel').addEventListener('change', () => { actualizarLista(); redibujar(); });
+    document.getElementById('filtro-capa').addEventListener('change', () => {
+      document.getElementById('lbl-capa').textContent =
+        document.getElementById('filtro-capa').value === 'a' ? 'Capa A' : 'Capa B';
+      poblarNiveles(); actualizarLista();
+    });
+    document.getElementById('buscar').addEventListener('input', actualizarLista);
+    document.getElementById('filtro-nivel').addEventListener('change', () => { actualizarLista(); redibujar(); });
 
 
-// ══════════════════════════════════════════════════
-// PANEL PESOS
-// ══════════════════════════════════════════════════
-const LABELS = {
-  NO_ESCOLAR:'Sin escolaridad', ANALFABETISMO:'Analfabetismo',
-  PISO_TIERRA:'Piso de tierra', SIN_AGUA:'Sin agua',
-  SIN_DRENAJE:'Sin drenaje',    HACINAMIENTO:'Hacinamiento'
-};
-const CORR = {
-  NO_ESCOLAR:'corr=0.33', ANALFABETISMO:'corr=0.55',
-  PISO_TIERRA:'corr=0.73', SIN_AGUA:'corr=0.66',
-  SIN_DRENAJE:'corr=0.66', HACINAMIENTO:'corr=0.73'
-};
+    // ══════════════════════════════════════════════════
+    // PANEL PESOS
+    // ══════════════════════════════════════════════════
+    const LABELS = {
+      NO_ESCOLAR: 'Sin escolaridad', ANALFABETISMO: 'Analfabetismo',
+      PISO_TIERRA: 'Piso de tierra', SIN_AGUA: 'Sin agua',
+      SIN_DRENAJE: 'Sin drenaje', HACINAMIENTO: 'Hacinamiento'
+    };
+    const CORR = {
+      NO_ESCOLAR: 'corr=0.33', ANALFABETISMO: 'corr=0.55',
+      PISO_TIERRA: 'corr=0.73', SIN_AGUA: 'corr=0.66',
+      SIN_DRENAJE: 'corr=0.66', HACINAMIENTO: 'corr=0.73'
+    };
 
-function abrirPesos() { 
-  construirSliders(); 
-  document.getElementById('panel-pesos').style.display='block'; 
-  document.getElementById('sidebar').classList.remove('open');
-}
-function cerrarPesos() { document.getElementById('panel-pesos').style.display='none'; }
+    function abrirPesos() {
+      construirSliders();
+      document.getElementById('panel-pesos').style.display = 'block';
+      document.getElementById('sidebar').classList.remove('open');
+    }
+    function cerrarPesos() { document.getElementById('panel-pesos').style.display = 'none'; }
 
-function construirSliders() {
-  document.getElementById('sliders-area').innerHTML = Object.keys(pesos).map(k=>`
+    function construirSliders() {
+      document.getElementById('sliders-area').innerHTML = Object.keys(pesos).map(k => `
     <div class="sl-row">
       <label>
         <span>${LABELS[k]} <span class="peso-corr">${CORR[k]}</span></span>
-        <span id="lbl-${k}">${Math.round(pesos[k]*100)}%</span>
+        <span id="lbl-${k}">${Math.round(pesos[k] * 100)}%</span>
       </label>
-      <input type="range" min="0" max="100" value="${Math.round(pesos[k]*100)}" id="sld-${k}"
+      <input type="range" min="0" max="100" value="${Math.round(pesos[k] * 100)}" id="sld-${k}"
         oninput="onSl('${k}',this.value)"/>
     </div>`).join('');
-  actualizarSuma();
-}
-
-function onSl(k,v) {
-  pesos[k]=parseInt(v)/100;
-  document.getElementById('lbl-'+k).textContent=v+'%';
-  actualizarSuma();
-}
-
-function actualizarSuma() {
-  const s=Object.values(pesos).reduce((a,b)=>a+b,0)*100;
-  document.getElementById('suma-display').innerHTML=
-    `Suma: <span class="${Math.abs(s-100)>1?'s-err':'s-ok'}">${s.toFixed(1)}%</span>`;
-}
-
-function restablecerPesos() {
-  pesos={...PESOS_ACP}; construirSliders();
-}
-
-function restablecerIguales() {
-  pesos={...PESOS_IGUALES}; construirSliders();
-}
-
-function aplicarPesos() {
-  const s=Object.values(pesos).reduce((a,b)=>a+b,0);
-  if(s===0){alert('Los pesos no pueden sumar cero.');return;}
-  const pN={};
-  Object.keys(pesos).forEach(k=>pN[k]=pesos[k]/s);
-  pesos=pN;
-
-  // Recalcular umbrales adaptativos con los nuevos pesos
-  recalcUmbrales(pesos);
-
-  datosB=DATOS.map(d=>{
-    const ib=calcIdxB(d,pesos);
-    return {...d,indice_b:ib,nivel_b:nivelB(ib)};
-  });
-
-  // Actualizar sliders a valores normalizados
-  Object.keys(pesos).forEach(k=>{
-    const sld=document.getElementById('sld-'+k);
-    const lbl=document.getElementById('lbl-'+k);
-    if(sld) sld.value=Math.round(pesos[k]*100);
-    if(lbl) lbl.textContent=Math.round(pesos[k]*100)+'%';
-  });
-  actualizarSuma();
-  redibujar();
-  cerrarPesos();
-}
-
-// ══════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════
-fetch('/data.json')
-  .then(res => res.json())
-  .then(data => {
-    DATOS = data;
-    datosB = DATOS.map(d => {
-      const ib = calcIdxB(d, pesos);
-      return {...d, indice_b: ib, nivel_b: nivelB(ib)};
-    });
-    poblarNiveles();
-    redibujar();
-  });
-
-window.addEventListener('message', (event) => {
-  if (event.data.type === 'THEME_CHANGE') {
-    const isDark = event.data.dark;
-    if (modoOscuro !== isDark) {
-      modoOscuro = isDark;
-      document.body.classList.toggle('light', !modoOscuro);
-      map.removeLayer(tile);
-      tile = L.tileLayer(modoOscuro?TILES.dark:TILES.light, {attribution:'© OpenStreetMap © CARTO', maxZoom:19}).addTo(map);
+      actualizarSuma();
     }
-  }
-});
-</script>
+
+    function onSl(k, v) {
+      pesos[k] = parseInt(v) / 100;
+      document.getElementById('lbl-' + k).textContent = v + '%';
+      actualizarSuma();
+    }
+
+    function actualizarSuma() {
+      const s = Object.values(pesos).reduce((a, b) => a + b, 0) * 100;
+      document.getElementById('suma-display').innerHTML =
+        `Suma: <span class="${Math.abs(s - 100) > 1 ? 's-err' : 's-ok'}">${s.toFixed(1)}%</span>`;
+    }
+
+    function restablecerPesos() {
+      pesos = { ...PESOS_ACP }; construirSliders();
+    }
+
+    function restablecerIguales() {
+      pesos = { ...PESOS_IGUALES }; construirSliders();
+    }
+
+    function aplicarPesos() {
+      const s = Object.values(pesos).reduce((a, b) => a + b, 0);
+      if (s === 0) { alert('Los pesos no pueden sumar cero.'); return; }
+      const pN = {};
+      Object.keys(pesos).forEach(k => pN[k] = pesos[k] / s);
+      pesos = pN;
+
+      // Recalcular umbrales adaptativos con los nuevos pesos
+      recalcUmbrales(pesos);
+
+      datosB = DATOS.map(d => {
+        const ib = calcIdxB(d, pesos);
+        return { ...d, indice_b: ib, nivel_b: nivelB(ib) };
+      });
+
+      // Actualizar sliders a valores normalizados
+      Object.keys(pesos).forEach(k => {
+        const sld = document.getElementById('sld-' + k);
+        const lbl = document.getElementById('lbl-' + k);
+        if (sld) sld.value = Math.round(pesos[k] * 100);
+        if (lbl) lbl.textContent = Math.round(pesos[k] * 100) + '%';
+      });
+      actualizarSuma();
+      redibujar();
+      cerrarPesos();
+    }
+
+    // ══════════════════════════════════════════════════
+    // INIT
+    // ══════════════════════════════════════════════════
+    fetch('/data.json')
+      .then(res => res.json())
+      .then(data => {
+        DATOS = data;
+        datosB = DATOS.map(d => {
+          const ib = calcIdxB(d, pesos);
+          return { ...d, indice_b: ib, nivel_b: nivelB(ib) };
+        });
+        poblarNiveles();
+        redibujar();
+      });
+
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'THEME_CHANGE') {
+        const isDark = event.data.dark;
+        if (modoOscuro !== isDark) {
+          modoOscuro = isDark;
+          document.body.classList.toggle('light', !modoOscuro);
+          map.removeLayer(tile);
+          tile = L.tileLayer(modoOscuro ? TILES.dark : TILES.light, { attribution: '© OpenStreetMap © CARTO', maxZoom: 19 }).addTo(map);
+        }
+      }
+    });
+  </script>
 </body>
+
 </html>

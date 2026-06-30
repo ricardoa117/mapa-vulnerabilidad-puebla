@@ -1,4 +1,4 @@
-# 🗺 Sistema TIA — Mapa de Vulnerabilidad Social · Puebla
+# Sistema ATLAS Mapa de Vulnerabilidad Social · Puebla
 
 > Herramienta web interactiva para identificar y comparar comunidades en situación de vulnerabilidad en el estado de Puebla, México, a partir de datos del INEGI (Censo de Población y Vivienda 2020).
 
